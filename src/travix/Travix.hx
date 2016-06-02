@@ -436,6 +436,9 @@ class Travix {
     var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
       "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
+    exec('dpkg', ['--add-architecture', 'i386']);
+    exec('apt-get', ['update']);
+
     for(pack in packages) aptGet(pack);
     endFold('flash-install');
 
