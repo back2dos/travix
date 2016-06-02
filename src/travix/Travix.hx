@@ -432,7 +432,7 @@ class Travix {
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
-    //exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
     exec('sudo', ['apt-get', 'clean']);
     exec('sudo', ['apt-get', 'update']);
 
