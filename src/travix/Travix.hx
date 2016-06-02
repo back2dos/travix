@@ -437,7 +437,7 @@ class Travix {
       "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
     exec('sudo', ['dpkg', '--add-architecture', 'i386']);
-    exec('apt-get', ['update']);
+    exec('sudo', ['apt-get', 'update']);
 
     for(pack in packages) aptGet(pack);
     endFold('flash-install');
