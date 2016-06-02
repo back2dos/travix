@@ -432,14 +432,17 @@ class Travix {
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
+    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+    aptGet('ia32-libs-gtk-i386');
+
     // Required flash libs
+    /*
     var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
       "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
-    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
-    exec('sudo', ['apt-get', 'update']);
-
     for(pack in packages) aptGet(pack);
+   	*/
+
     endFold('flash-install');
 
     build(['-swf', 'bin/swf/tests.swf'], function () {
