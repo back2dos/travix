@@ -402,7 +402,10 @@ class Travix {
   
   function doFlash() {
     var flashPath = switch Sys.systemName() {
-      case 'Linux': '/home/travis/.macromedia/Flash_Player';
+      case 'Linux': 
+      	var isTravis = Sys.getEnv("TRAVIS");
+      	var path = isTravis == null || isTravis.length == 0 ? '~' : '/home/travis';
+      	'$path/.macromedia/Flash_Player';
       case _: null;
     }
 
@@ -421,22 +424,17 @@ class Travix {
     exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > /home/travis/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
-    exec('eval', ['sudo mkdir -m 777 -p $flashPath']);
-    exec('sudo', ['ls', '-la', '/home/travis']);
-    exec('sudo', ['ls', '-la', '$flashPath']);
-    exec('eval', ['sudo mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
-    exec('eval', ['sudo echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
+    exec('eval', ['mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
+    exec('eval', ['echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
 
-    exec('eval', ['sudo mkdir -m 777 -p $flashPath/Logs']);
-    //exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
-    //exec('touch', ['$flashPath/Logs/flashlog.txt']);
+    exec('eval', ['mkdir -m 777 -p $flashPath/Logs']);
+    exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
+    exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
 	    exec('eval', ['tar -C $flashPath -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger"']);
-	    exec('ls', ['-l', '$flashPath']);
-	    exec('ls', ['-l', '.']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
