@@ -418,20 +418,20 @@ class Travix {
     exec('export', ['AUDIODEV=null']);
 
     // Create a configuration file so the trace log is enabled
-    exec('eval', ['echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > ~/mm.cfg']);
+    exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > ~/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
-    exec('eval', ['mkdir -p $flashPath/#Security/FlashPlayerTrust']);
-    exec('eval', ['echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
+    exec('eval', ['sudo mkdir -p $flashPath/#Security/FlashPlayerTrust']);
+    exec('eval', ['sudo echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
 
-    exec('eval', ['mkdir -p $flashPath/Logs']);    
+    exec('eval', ['sudo mkdir -p $flashPath/Logs']);    
     //exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
     //exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
-	    exec('eval', ['tar -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger" -C $flashPath']);
+	    exec('eval', ['sudo tar -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger" -C $flashPath']);
 	    exec('ls', ['-l', '$flashPath']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
