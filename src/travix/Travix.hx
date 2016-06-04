@@ -403,7 +403,6 @@ class Travix {
   function doFlash() {
     var flashPath = switch Sys.systemName() {
       case 'Linux': '~/.macromedia/Flash_Player';
-      case 'Mac': '~/Library/Preferences/Macromedia/Flash\\ Player';
       case _: null;
     }
 
@@ -436,6 +435,7 @@ class Travix {
 
     exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
     exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+    exec('sudo', ['sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32 40976EAF437D05B5']);
     exec('sudo', ['apt-get', 'update']);
 
     //exec('sudo', ['apt-get', 'clean']);
