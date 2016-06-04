@@ -432,6 +432,7 @@ class Travix {
     if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
 	    exec('eval', ['tar -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger" -C $flashPath']);
+	    exec('ls', ['-l', '$flashPath']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
