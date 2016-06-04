@@ -401,18 +401,23 @@ class Travix {
   }
   
   function doFlash() {
-    var flashPath = switch Sys.systemName() {
-      case 'Linux': 
-      	var isTravis = Sys.getEnv("TRAVIS");
-      	var path = isTravis == null || isTravis.length == 0 ? '~' : '/home/travis';
-      	'$path/.macromedia/Flash_Player';
+    var isTravis = {
+      var travis = Sys.getEnv("TRAVIS");
+      travis != null && travis.length > 0;
+    }
+
+    var homePath = switch Sys.systemName() {
+      // Run only on Linux, and Travis cannot use ~ as path
+      case 'Linux': isTravis ? '/home/travis' : '~';
       case _: null;
     }
 
-    if(flashPath == null) {
+    if(homePath == null) {
       build(['-swf', 'bin/swf/tests.swf'], function () {});
       return;
-    }
+    }    
+
+    var flashPath = '$homePath/.macromedia/Flash_Player';
 
     startFold('flash-install');
 
@@ -421,7 +426,7 @@ class Travix {
     exec('export', ['AUDIODEV=null']);
 
     // Create a configuration file so the trace log is enabled
-    exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > /home/travis/mm.cfg']);
+    exec('eval', ['echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > $homePath/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
     exec('eval', ['mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
@@ -433,26 +438,28 @@ class Travix {
 
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
-	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
-	    exec('eval', ['tar -C $flashPath -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger"']);
-	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
-	}
+      exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
+      exec('eval', ['tar -C $flashPath -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger"']);
+      exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 
-	// Installing 386 packages on trusty is a mess.
-    exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
-    exec('eval', ['sudo sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
-    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
-    exec('sudo', ['apt-get', 'update']);
+      // Installing 386 packages on Travis/trusty is a mess.
+      if(isTravis) {
+        exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
+        exec('eval', ['sudo sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
+        exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+        exec('sudo', ['apt-get', 'update']);
+      }
 
-    // Required flash libs
-    var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
-      "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
+      // Required flash libs
+      var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
+        "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
-    for(pack in packages) aptGet(pack);
+      for(pack in packages) aptGet(pack);
+    }
 
     endFold('flash-install');
 
-	/////////////////////////
+  /////////////////////////
 
     build(['-swf', 'bin/swf/tests.swf'], function () {
       startFold('flash-run');
