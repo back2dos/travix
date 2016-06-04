@@ -434,19 +434,18 @@ class Travix {
 
     ///// DEBUGGING /////
 
-    //exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+    exec('ls', ['/etc/dpkg/dpkg.cfg.d/']);
+    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
     //exec('sudo', ['apt-get', 'clean']);
-    //exec('sudo', ['apt-get', 'update']);
+    exec('sudo', ['apt-get', 'update']);
     //exec("sudo", ['cat', '/etc/apt/sources.list']);
-    for(lib in ['gcc-multilib', 'lib32z1', 'lib32ncurses5', 'lib32bz2-1.0']) aptGet(lib);
+    //for(lib in ['gcc-multilib', 'lib32z1', 'lib32ncurses5', 'lib32bz2-1.0']) aptGet(lib);
 
     // Required flash libs
-    /*
     var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
       "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
     for(pack in packages) aptGet(pack);
-   	*/
 
     /////////////////////
 
