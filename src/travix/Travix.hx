@@ -402,7 +402,7 @@ class Travix {
   
   function doFlash() {
     var flashPath = switch Sys.systemName() {
-      case 'Linux': '~/.macromedia/Flash_Player';
+      case 'Linux': '/home/travis/.macromedia/Flash_Player';
       case _: null;
     }
 
@@ -418,13 +418,11 @@ class Travix {
     exec('export', ['AUDIODEV=null']);
 
     // Create a configuration file so the trace log is enabled
-    exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > ~/mm.cfg']);
+    exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > /home/travis/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
-    exec('eval', ['sudo mkdir -m 777 -p ~/.macromedia']);
     exec('eval', ['sudo mkdir -m 777 -p $flashPath']);
-    exec('sudo', ['ls', '-la', '~']);
-    exec('sudo', ['ls', '-la', '/home/vagrant']);
+    exec('sudo', ['ls', '-la', '/home/travis']);
     exec('sudo', ['ls', '-la', '$flashPath']);
     exec('eval', ['sudo mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
     exec('eval', ['sudo echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
