@@ -421,7 +421,11 @@ class Travix {
     exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > ~/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
+    exec('eval', ['sudo mkdir -m 777 -p ~/.macromedia']);
     exec('eval', ['sudo mkdir -m 777 -p $flashPath']);
+    exec('sudo', ['ls', '-la', '~']);
+    exec('sudo', ['ls', '-la', '/home/vagrant']);
+    exec('sudo', ['ls', '-la', '$flashPath']);
     exec('eval', ['sudo mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
     exec('eval', ['sudo echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
 
