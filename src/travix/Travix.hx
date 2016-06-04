@@ -425,8 +425,8 @@ class Travix {
     exec('eval', ['echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
 
     exec('eval', ['mkdir -p $flashPath/Logs']);    
-    exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
-    exec('touch', ['$flashPath/Logs/flashlog.txt']);
+    //exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
+    //exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", "~/flashplayerdebugger"]) != 0) {
@@ -456,7 +456,7 @@ class Travix {
       // Create the logfile
 
       // Must use eval to start tail in background, to get output
-      exec('eval', ['tail -f $flashPath/Logs/flashlog.txt &']);
+      exec('eval', ['tail -f --follow=name --retry $flashPath/Logs/flashlog.txt &']);
 
       // The flash player has some issues with unexplained crashes,
       // but if it runs about 7 times, it should succeed one of those.
