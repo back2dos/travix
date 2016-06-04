@@ -10,7 +10,12 @@ haxe:
 matrix:
   allow_failures:
     - haxe: development
-    
+
+before_install:
+  - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  - sudo dpkg --add-architecture i386
+  - sudo apt-get update
+
 install:
   - haxelib dev travix .
   - haxelib run travix install
