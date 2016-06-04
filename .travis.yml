@@ -10,17 +10,18 @@ haxe:
 matrix:
   allow_failures:
     - haxe: development
-    
+
 install:
   - haxelib dev travix .
   - haxelib run travix install
   
 script:
   - haxelib run travix interp
+  - haxelib run travix flash -D flash-exit -D reporter=buddy.reporting.TraceReporter
   - haxelib run travix php
   - haxelib run travix node
   - haxelib run travix neko
   - haxelib run travix python
   - haxelib run travix java
   - haxelib run travix cs
-  - haxelib run travix cpp  
+  - haxelib run travix cpp -lib hxcpp

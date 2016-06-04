@@ -401,7 +401,85 @@ class Travix {
   }
   
   function doFlash() {
-    build(['-swf', 'bin/swf/tests.swf'], function () {});
+    var isTravis = {
+      var travis = Sys.getEnv("TRAVIS");
+      travis != null && travis.length > 0;
+    }
+
+    var homePath = switch Sys.systemName() {
+      // Run only on Linux, and Travis cannot use ~ as path
+      case 'Linux': isTravis ? '/home/travis' : '~';
+      case _: null;
+    }
+
+    if(homePath == null) {
+      build(['-swf', 'bin/swf/tests.swf'], function () {});
+      return;
+    }    
+
+    var flashPath = '$homePath/.macromedia/Flash_Player';
+
+    startFold('flash-install');
+
+    // Some xvfb settings
+    exec('export', ['DISPLAY=:99.0']);
+    exec('export', ['AUDIODEV=null']);
+
+    // Create a configuration file so the trace log is enabled
+    exec('eval', ['echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > $homePath/mm.cfg']);
+
+    // Add the current directory as trusted, so exit can be used.
+    exec('eval', ['mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
+    exec('eval', ['echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
+
+    exec('eval', ['mkdir -m 777 -p $flashPath/Logs']);
+    exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
+    exec('touch', ['$flashPath/Logs/flashlog.txt']);
+
+    // Download and unzip the player, unless it exists already
+    if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
+      exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
+      exec('eval', ['tar -C $flashPath -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger"']);
+      exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
+
+      // Installing 386 packages on Travis/trusty is a mess.
+      if(isTravis) {
+        exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
+        exec('eval', ['sudo sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
+        exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+        exec('sudo', ['apt-get', 'update']);
+      }
+
+      // Required flash libs
+      var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
+        "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
+
+      for(pack in packages) aptGet(pack);
+
+    }
+    
+    // Tail the logfile. Must use eval to start tail in background, to see the output.
+    exec('eval', ['tail -f --follow=name --retry $flashPath/Logs/flashlog.txt &']);
+    endFold('flash-install');
+
+    build(['-swf', 'bin/swf/tests.swf'], function () {
+      // The flash player has some issues with unexplained crashes,
+      // but if it runs about 7 times, it should succeed one of those.
+      var ok = false;
+      for(i in 1 ... 8) {
+        if(command('xvfb-run', ['$flashPath/flashplayerdebugger', 'bin/swf/tests.swf']) == 0) {
+          ok = true; break;
+        }
+      }
+
+      // Kill the tail process
+      exec('eval', ["ps aux | grep -ie [L]ogs/flashlog.txt | awk '{print $2}' | xargs kill -9"]);
+
+      if(!ok) {
+        println('Flash execution failed too many times, build failure.');
+        exit(1);
+      }
+    });
   }
   
   function doNode() {
