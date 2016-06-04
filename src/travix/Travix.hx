@@ -422,8 +422,11 @@ class Travix {
 
     // Add the current directory as trusted, so exit can be used.
     exec('eval', ['mkdir -p $flashPath/#Security/FlashPlayerTrust']);
-    exec('eval', ['mkdir -p $flashPath/Logs']);
     exec('eval', ['echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
+
+    exec('eval', ['mkdir -p $flashPath/Logs']);    
+    exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
+    exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", "~/flashplayerdebugger"]) != 0) {
@@ -451,8 +454,6 @@ class Travix {
     build(['-swf', 'bin/swf/tests.swf'], function () {
       startFold('flash-run');
       // Create the logfile
-      exec('rm', ['-f', '$flashPath/Logs/flashlog.txt']);
-      exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
       // Must use eval to start tail in background, to get output
       exec('eval', ['tail -f $flashPath/Logs/flashlog.txt &']);
