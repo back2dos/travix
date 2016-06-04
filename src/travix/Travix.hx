@@ -433,9 +433,10 @@ class Travix {
 
     ///// DEBUGGING /////
 
-    //exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
-    //exec('sudo', ['dpkg', '--add-architecture', 'i386']);
-    //exec('sudo', ['apt-get', 'update']);
+    exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
+    exec('eval', ['sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
+    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
+    exec('sudo', ['apt-get', 'update']);
 
     //exec('sudo', ['apt-get', 'clean']);
     //for(lib in ['gcc-multilib', 'lib32z1', 'lib32ncurses5', 'lib32bz2-1.0']) aptGet(lib);
