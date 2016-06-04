@@ -455,19 +455,14 @@ class Travix {
         "libxcursor1:i386","libnss3:i386", "libgtk2.0-0:i386"];
 
       for(pack in packages) aptGet(pack);
-    }
 
+    }
+    
+    // Tail the logfile. Must use eval to start tail in background, to see the output.
+    exec('eval', ['tail -f --follow=name --retry $flashPath/Logs/flashlog.txt &']);
     endFold('flash-install');
 
-  /////////////////////////
-
     build(['-swf', 'bin/swf/tests.swf'], function () {
-      startFold('flash-run');
-      // Create the logfile
-
-      // Must use eval to start tail in background, to get output
-      exec('eval', ['tail -f --follow=name --retry $flashPath/Logs/flashlog.txt &']);
-
       // The flash player has some issues with unexplained crashes,
       // but if it runs about 7 times, it should succeed one of those.
       var ok = false;
@@ -479,7 +474,6 @@ class Travix {
 
       // Kill the tail process
       exec('eval', ["ps aux | grep -ie [L]ogs/flashlog.txt | awk '{print $2}' | xargs kill -9"]);
-      endFold('flash-run');
 
       if(!ok) {
         println('Flash execution failed too many times, build failure.');
