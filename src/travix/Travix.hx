@@ -434,7 +434,7 @@ class Travix {
     ///// DEBUGGING /////
 
     exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
-    exec('eval', ['sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
+    exec('eval', ['sudo sed -i -e \'s/deb http/deb [arch=amd64] http/\' "/etc/apt/sources.list.d/google-chrome.list" "/opt/google/chrome/cron/google-chrome"']);
     exec('sudo', ['dpkg', '--add-architecture', 'i386']);
     exec('sudo', ['apt-get', 'update']);
 
