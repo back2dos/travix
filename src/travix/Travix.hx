@@ -438,7 +438,7 @@ class Travix {
     //exec('sudo', ['apt-get', 'clean']);
     //exec('sudo', ['apt-get', 'update']);
     //exec("sudo", ['cat', '/etc/apt/sources.list']);
-    aptGet('ia32-libs');
+    for(lib in ['lib32z1', 'lib32ncurses5', 'lib32bz2-1.0']) aptGet(lib);
 
     // Required flash libs
     /*
