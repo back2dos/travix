@@ -421,6 +421,7 @@ class Travix {
     exec('eval', ['sudo echo "ErrorReportingEnable=1\\nTraceOutputFileEnable=1" > ~/mm.cfg']);
 
     // Add the current directory as trusted, so exit can be used.
+    exec('eval', ['sudo mkdir -m 777 -p $flashPath']);
     exec('eval', ['sudo mkdir -m 777 -p $flashPath/#Security/FlashPlayerTrust']);
     exec('eval', ['sudo echo "`pwd`" > $flashPath/#Security/FlashPlayerTrust/travix.cfg']);
 
@@ -431,8 +432,9 @@ class Travix {
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
-	    exec('eval', ['sudo tar -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger" -C $flashPath']);
+	    exec('eval', ['tar -C $flashPath -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger"']);
 	    exec('ls', ['-l', '$flashPath']);
+	    exec('ls', ['-l', '.']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
