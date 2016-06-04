@@ -428,14 +428,18 @@ class Travix {
     // Download and unzip the player, unless it exists already
     if(command("test", ["-f", "~/flashplayerdebugger"]) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
-	    exec('tar', ['-xf', 'flashplayer_11_sa_debug.i386.tar.gz', '-C', '~/']);
+	    exec('tar', ['-xf', 'flashplayer_11_sa_debug.i386.tar.gz', '-C', '~']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
     ///// DEBUGGING /////
 
     exec('eval', ['wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -']);
+    exec('sudo', ['dpkg', '--add-architecture', 'i386']);
     exec('sudo', ['apt-get', 'update']);
+
+    //exec('sudo', ['apt-get', 'clean']);
+    //for(lib in ['gcc-multilib', 'lib32z1', 'lib32ncurses5', 'lib32bz2-1.0']) aptGet(lib);
 
     // Required flash libs
     var packages = ["libcurl3:i386","libglib2.0-0:i386","libx11-6:i386", "libxext6:i386","libxt6:i386",
