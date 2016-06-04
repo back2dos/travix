@@ -429,9 +429,9 @@ class Travix {
     //exec('touch', ['$flashPath/Logs/flashlog.txt']);
 
     // Download and unzip the player, unless it exists already
-    if(command("test", ["-f", "~/flashplayerdebugger"]) != 0) {
+    if(command("test", ["-f", '$flashPath/flashplayerdebugger']) != 0) {
 	    exec('wget', ['-nv', 'http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa_debug.i386.tar.gz']);
-	    exec('eval', ['tar -xvf flashplayer_11_sa_debug.i386.tar.gz -C ~']);
+	    exec('eval', ['tar -xvf flashplayer_11_sa_debug.i386.tar.gz --wildcards "flashplayerdebugger" -C $flashPath']);
 	    exec('rm', ['-f', 'flashplayer_11_sa_debug.i386.tar.gz']);
 	}
 
@@ -462,7 +462,7 @@ class Travix {
       // but if it runs about 7 times, it should succeed one of those.
       var ok = false;
       for(i in 1 ... 8) {
-        if(command('xvfb-run', ['~/flashplayerdebugger', 'bin/swf/tests.swf']) == 0) {
+        if(command('xvfb-run', ['$flashPath/flashplayerdebugger', 'bin/swf/tests.swf']) == 0) {
           ok = true; break;
         }
       }
