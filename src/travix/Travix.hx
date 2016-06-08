@@ -578,6 +578,7 @@ class Travix {
   }
 
   function doLua() {
+    startFold('lua-install');
     if(command('eval', ['which luarocks >/dev/null']) != 0) {
 
       for(pack in ["lua5.2","make","unzip","libpcre3","libpcre3-dev"]) 
@@ -608,6 +609,7 @@ class Travix {
       exec('eval', ['sudo luarocks install lrexlib-pcre 2.7.2-1']);
       exec('eval', ['sudo luarocks install luafilesystem']);
     }
+    endFold('lua-install');
 
     build(['-lua', 'bin/lua/tests.lua'], function () {
       exec('lua', ['bin/lua/tests.lua']);
