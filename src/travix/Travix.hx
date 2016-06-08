@@ -28,7 +28,7 @@ class Travix {
   static inline var TESTS = 'tests.hxml';
   
   static inline var DEFAULT_PLATFORMS = 'interp, neko, node, python, java';
-  static inline var ALL = 'interp,neko,python,node,flash,java,cpp,cs,php';
+  static var ALL = 'interp,neko,python,node,flash,java,cpp,cs,php';
   
   static inline var TRAVIS_CONFIG = '.travis.yml';
   static inline var HAXELIB_CONFIG = 'haxelib.json';
@@ -37,6 +37,7 @@ class Travix {
   
   static var isTravis = Sys.getEnv('TRAVIS') == 'true';
   static var counter = 0;
+  static var haxeVersion:String;
   
   var cmd:String;
   var args:Array<String>;
@@ -574,28 +575,76 @@ class Travix {
       }
       exec('node', ['bin/node/tests.js']);
     });
-  }  
+  }
+
+  function doLua() {
+    if(command('eval', ['which luarocks >/dev/null']) != 0) {
+
+      for(pack in ["lua5.2","make","unzip","libpcre3","libpcre3-dev"]) 
+        aptGet(pack);
+
+      // Add source files so luarocks can be compiled
+      exec('sudo', ['mkdir', '-p', '/usr/include/lua/5.2']);
+      exec('wget', ['-q', 'http://www.lua.org/ftp/lua-5.2.0.tar.gz']);
+      exec('tar', ['xf', 'lua-5.2.0.tar.gz']);
+      exec('eval', ['sudo cp lua-5.2.0/src/* /usr/include/lua/5.2']);
+      exec('rm', ['-rf', 'lua-5.2.0']);
+      exec('rm', ['-f', 'lua-5.2.0.tar.gz']);
+
+      // Compile luarocks
+      exec('wget', ['-q', 'http://luarocks.org/releases/luarocks-2.3.0.tar.gz']);
+      exec('tar', ['zxpf', 'luarocks-2.3.0.tar.gz']);
+
+      withCwd('luarocks-2.3.0', function() {
+        exec('./configure');
+        exec('eval', ['make build >/dev/null']);
+        exec('eval', ['sudo make install >/dev/null']);
+      });
+
+      exec('rm', ['-f', 'luarocks-2.3.0.tar.gz']);
+      exec('rm', ['-rf', 'luarocks-2.3.0']);
+
+      // Install lua pcre and lfs so it works with Haxe
+      exec('eval', ['sudo luarocks install lrexlib-pcre 2.7.2-1']);
+      exec('eval', ['sudo luarocks install luafilesystem']);
+    }
+
+    build(['-lua', 'bin/lua/tests.lua'], function () {
+      exec('lua', ['bin/lua/tests.lua']);
+    });
+  }
   
   function doHelp() {
     println('Commands');
     println('  ');
     println('  init - initializes a project with a .travis.yml');
     println('  install - installs dependencies');
+    println('  ');
+    println('  cpp - run tests on cpp');
+    println('  cs - run tests on cs');
+    println('  flash - run tests on flash');
     println('  interp - run tests on interpreter');
+    println('  java - run tests on java');
+
+    if(haxeVersion >= "3.3.0") 
+      println('  lua - run tests on lua');
+
     println('  neko - run tests on neko');
     println('  node - run tests on nodejs (with hxnodejs)');
     println('  php - run tests on php');
-    println('  java - run tests on java');
-    println('  flash - run tests on flash');
     println('  python - run tests on python');
-    println('  cs - run tests on cs');
-    println('  cpp - run tests on cpp');
   }
 
   ///// Static methods /////////////////////////////////////////////////////////////////////
   
   static function main() {
     
+    haxeVersion = {
+      var p = new Process('haxe', ['-version']);
+      p.stderr.readAll().toString();
+    }
+    if(haxeVersion >= "3.3.0") ALL += ",lua";
+
     incrementCounter();
     
     var args = Sys.args();
@@ -619,6 +668,9 @@ class Travix {
       case 'php': t.doPhp();
       case 'python': t.doPython();
       case 'cs': t.doCs();
+      case 'lua': 
+        if(haxeVersion < "3.3.0") die('lua requires haxe >= 3.3.0');
+        else t.doLua();
       case v:
         die('Unknown command $v');
     }
