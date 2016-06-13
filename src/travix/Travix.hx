@@ -579,6 +579,16 @@ class Travix {
     });
   }  
   
+  function doJs() {
+    build(['-js', 'bin/js/tests.js'], function () {
+      var index = 'bin/js/index.html';
+      if(!index.exists()) index.saveContent(defaultIndexHtml());
+      var runPhantom = 'bin/js/runPhantom.js';
+      if(!runPhantom.exists()) runPhantom.saveContent(defaultPhantomScript());
+      exec('phantomjs', [runPhantom]);
+    });
+  }
+  
   function doHelp() {
     println('Commands');
     println('  ');
@@ -587,6 +597,7 @@ class Travix {
     println('  interp - run tests on interpreter');
     println('  neko - run tests on neko');
     println('  node - run tests on nodejs (with hxnodejs)');
+    println('  js - run tests on js (run in phantomjs)');
     println('  php - run tests on php');
     println('  java - run tests on java');
     println('  flash - run tests on flash');
@@ -616,6 +627,7 @@ class Travix {
       case 'interp': t.doInterp();
       case 'neko': t.doNeko();
       case 'node': t.doNode();
+      case 'js': t.doJs();
       case 'java': t.doJava();
       case 'flash': t.doFlash();
       case 'cpp': t.doCpp();
@@ -659,7 +671,14 @@ class Travix {
   }  
   macro static function defaultEntryPoint() {
     return loadFile('default.hx');
-  }  
+  }
+  macro static function defaultIndexHtml() {
+    return loadFile('js/index.html');
+  }
+  macro static function defaultPhantomScript() {
+    return loadFile('js/runPhantom.js');
+  }
+  
   #if macro
   static function loadFile(name:String) {
     return MacroStringTools.formatString(File.getContent(Context.getPosInfos((macro null).pos).file.directory() + '/$name'), Context.currentPos());
