@@ -25,3 +25,4 @@ script:
   - haxelib run travix java
   - haxelib run travix cs
   - haxelib run travix cpp -lib hxcpp
+  - bash -c "if [[ ! '$TRAVIS_HAXE_VERSION' < '3.3.0' ]]; then haxelib run travix lua; fi"
