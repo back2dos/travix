@@ -18,7 +18,7 @@ class Logger {
   public static inline function println(s:String)
     logger.println(s);
 
-  public static inline function exit(code:Bool)
+  public static inline function exit(code:Int)
     logger.exit(code);
 
 }

@@ -11,7 +11,7 @@ class FlashLogger {
     
   }
   
-  static function exit(code:Bool) {
+  static function exit(code:Int) {
     
   }
   

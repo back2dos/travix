@@ -18,7 +18,7 @@ class JsLogger {
    });
   }
   
-  static function exit(code:Bool) {
+  static function exit(code:Int) {
     callPhantom({
      cmd: 'travix:exit',
      exitCode: 0,
