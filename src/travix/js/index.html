@@ -1,5 +1,11 @@
 <html>
 <body>
+	<script>
+	  // a hack specifically for haxe.unit.TestRunner();
+		if(!window.process) window.process = {};
+		if(!process.stdout) process.stdout = {};
+		if(!process.stdout.write) process.stdout.write = function(s) {window.callPhantom({cmd: 'travix:print', message: s})};
+	</script>
 	<script src="tests.js"></script>
 </body>
 </html>
