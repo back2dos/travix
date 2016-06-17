@@ -130,7 +130,7 @@ class Command {
   }
   
   function build(args:Array<String>, run) {
-    foldOutput('build-$cmd', exec.bind('haxe', ['-lib', Travix.getInfos().name, 'tests.hxml', '-D', 'travix'].concat(args).concat(this.args)));
+    foldOutput('build-$cmd', exec.bind('haxe', ['-lib', Travix.getInfos().name, 'tests.hxml', '-lib', 'travix'].concat(args).concat(this.args)));
     run();
   }
   
