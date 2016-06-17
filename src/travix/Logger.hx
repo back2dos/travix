@@ -2,23 +2,25 @@ package travix;
 
 import travix.loggers.*;
 
+// wrap the underlying implemention, to expose only the required methods
 class Logger {
-  static var logger = 
-    #if flash
-      FlashLogger;
-    #elseif (js && !nodejs)
-      JsLogger;
-    #else
-      Sys;
-    #end
   
   public static inline function print(s:String)
-    logger.print(s);
+    LoggerImpl.print(s);
 
   public static inline function println(s:String)
-    logger.println(s);
+    LoggerImpl.println(s);
 
   public static inline function exit(code:Int)
-    logger.exit(code);
+    LoggerImpl.exit(code);
 
 }
+
+private typedef LoggerImpl = 
+  #if flash
+    FlashLogger;
+  #elseif (js && !nodejs)
+    JsLogger;
+  #else
+    Sys;
+  #end

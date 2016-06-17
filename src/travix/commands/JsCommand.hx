@@ -5,6 +5,9 @@ using sys.FileSystem;
 
 class JsCommand extends Command {
   override function execute() {
+    // override console.log
+    untyped console.log = travix.Logger.println;
+    
     build(['-js', 'bin/js/tests.js'], function () {
       var index = 'bin/js/index.html';
       if(!index.exists()) index.saveContent(defaultIndexHtml());
