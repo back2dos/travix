@@ -30,19 +30,22 @@ Travix has individual commands for building:
 
 So instead of having to have to define all kinds of builds and figuring out the right way to run them, this will do.
 
-### Building for flash
+### Using Travix in your code
 
-Travix jumps through a couple of hoops to enable CI for flash. All you need to do however, is to use the following methods:
+There are differences among platforms about logging and exiting the process.
+For example, we run JS tests on PhantomJS where your test code need to communicate
+with the Phantom host in some special ways in order to log or exit the process.
+And on Flash you need to use `flash.Lib.trace` and `flash.system.System.exit(status)`.
 
-```haxe
-// Redirect all trace calls:
-haxe.Log.trace = function(v, ?pos) flash.Lib.trace(v);
+In order to ease the pain, travix provide a unified interface for these functionalities.
+Use them to instead of `trace()`, `Sys.exit()`, etc, for maximum compatibility across platforms
 
-// And exit with status 0 or 1 when tests are done:
-flash.system.System.exit(status);
-```
+- `travix.Logger.print(string)`: Print a string without newline
+- `travix.Logger.println(string)`: Print a string with newline
+- `travix.Logger.exit(exitCode)`: Exit the process
 
-The BDD library [Buddy](https://github.com/ciscoheat/buddy) has built-in support for flash testing, so if you're using Buddy you don't even have to worry about the above.
+
+The BDD library [Buddy](https://github.com/ciscoheat/buddy) has built-in support for flash and JS testing, so if you're using Buddy you don't even have to worry about the above.
 
 ## Reasons to use travix
 
