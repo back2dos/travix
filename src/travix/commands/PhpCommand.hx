@@ -8,7 +8,7 @@ class PhpCommand extends Command {
       if (tryToRun('php', ['--version']).match(Failure(_, _)))
         aptGet('php5');
         
-      exec('php', ['bin/php/index.php']);
+      exec('php', ['-d', 'xdebug.max_nesting_level=9999', 'bin/php/index.php']);
     });
   }
 }
