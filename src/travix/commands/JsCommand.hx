@@ -19,8 +19,9 @@ class JsCommand extends Command {
           var PHANTOM_JS = "phantomjs-2.1.1-linux-x86_64";
           exec('wget', ['https://github.com/Medium/phantomjs/releases/download/v2.1.1/$PHANTOM_JS.tar.bz2']);
           exec('tar', ['xvjf', '$PHANTOM_JS.tar.bz2']);
-          exec('export PATH=$$PWD/$PHANTOM_JS/bin/:$$PATH');
-          exec('echo $$PATH');
+          
+          exec('sudo', ['ln', '-sf', '$PHANTOM_JS/bin/phantomjs', '/usr/local/phantomjs/bin']);
+          exec('sudo', ['ln', '-sf', '$PHANTOM_JS/bin/phantomjs', '/usr/local/bin']);
         });
       }
     }
