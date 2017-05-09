@@ -5,7 +5,6 @@ using sys.FileSystem;
 
 class JsCommand extends Command {
   
-  static var PHANTOM_JS = "phantomjs-2.1.1-linux-x86_64";
   
   override function execute() {
     
@@ -15,6 +14,7 @@ class JsCommand extends Command {
       if(Travix.isMac) {
         aptGet('phantomjs');
       } else if(Travix.isLinux) {
+        var PHANTOM_JS = "phantomjs-2.1.1-linux-x86_64";
         
         foldOutput('phantomjs-update', function() {
           exec('sudo', ['apt-get', 'update']);
