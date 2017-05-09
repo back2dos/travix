@@ -20,8 +20,11 @@ class JsCommand extends Command {
           exec('wget', ['https://github.com/Medium/phantomjs/releases/download/v2.1.1/$PHANTOM_JS.tar.bz2']);
           exec('tar', ['xvjf', '$PHANTOM_JS.tar.bz2']);
           
+          exec('which phantomjs');
           exec('sudo', ['ln', '-sf', '$PHANTOM_JS/bin/phantomjs', '/usr/local/phantomjs/bin']);
           exec('sudo', ['ln', '-sf', '$PHANTOM_JS/bin/phantomjs', '/usr/local/bin']);
+          exec('which phantomjs');
+          exec('$PHANTOM_JS/bin/phantomjs -v');
         });
       }
     }
