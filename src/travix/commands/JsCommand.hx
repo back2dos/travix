@@ -10,15 +10,18 @@ class JsCommand extends Command {
         aptGet('phantomjs');
       } else if(Travix.isLinux) {
         
-        exec('sudo', ['apt-get', 'update']);
-        
-        for(dep in ['build-essential', 'chrpath', 'libssl-dev', 'libxft-dev', 'libfreetype6', 'libfreetype6-dev', 'libfontconfig1', 'libfontconfig1-dev'])
-          aptGet(dep);
+        foldOutput('phantomjs-update', function() {
+          exec('sudo', ['apt-get', 'update']);
+          
+          for(dep in ['build-essential', 'chrpath', 'libssl-dev', 'libxft-dev', 'libfreetype6', 'libfreetype6-dev', 'libfontconfig1', 'libfontconfig1-dev'])
+            aptGet(dep);
 
-        var PHANTOM_JS = "phantomjs-2.1.1-linux-x86_64";
-        exec('wget', ['https://github.com/Medium/phantomjs/releases/download/v2.1.1/$PHANTOM_JS.tar.bz2']);
-        exec('tar', ['xvjf', '$PHANTOM_JS.tar.bz2']);
-        exec('export PATH=$$PWD/$PHANTOM_JS/bin/:$$PATH');
+          var PHANTOM_JS = "phantomjs-2.1.1-linux-x86_64";
+          exec('wget', ['https://github.com/Medium/phantomjs/releases/download/v2.1.1/$PHANTOM_JS.tar.bz2']);
+          exec('tar', ['xvjf', '$PHANTOM_JS.tar.bz2']);
+          exec('export PATH=$$PWD/$PHANTOM_JS/bin/:$$PATH');
+          exec('echo $$PATH');
+        }
       }
     }
     
