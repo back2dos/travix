@@ -21,7 +21,7 @@ class JsCommand extends Command {
           exec('tar', ['xvjf', '$PHANTOM_JS.tar.bz2']);
           exec('export PATH=$$PWD/$PHANTOM_JS/bin/:$$PATH');
           exec('echo $$PATH');
-        }
+        });
       }
     }
     
