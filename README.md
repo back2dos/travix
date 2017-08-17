@@ -45,6 +45,14 @@ Use them to instead of `trace()`, `Sys.exit()`, etc, for maximum compatibility a
 - `travix.Logger.println(string)`: Print a string with newline
 - `travix.Logger.exit(exitCode)`: Exit the process
 
+If you want to be able to run your tests e.g. locally without Travix dependency use conditional compilation like this:
+```haxe
+#if travix
+    travix.Logger.trace(...);
+#else
+    trace(...); // ... or your own other trace method
+#end
+```
 
 The BDD library [Buddy](https://github.com/ciscoheat/buddy) has built-in support for flash and JS testing, so if you're using Buddy you don't even have to worry about the above.
 
