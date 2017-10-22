@@ -112,7 +112,7 @@ class Travix {
           new PhpCommand(cmd, args);
         #else
           new Php7Command(cmd, args);
-        #fi
+        #end
       case 'php7': new Php7Command(cmd, args);
       case 'python': new PythonCommand(cmd, args);
       case 'cs': new CsCommand(cmd, args);
