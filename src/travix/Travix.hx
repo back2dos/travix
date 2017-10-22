@@ -107,7 +107,12 @@ class Travix {
       case 'java': new JavaCommand(cmd, args);
       case 'flash': new FlashCommand(cmd, args);
       case 'cpp': new CppCommand(cmd, args);
-      case 'php': new PhpCommand(cmd, args);
+      case 'php':
+        #if (haxe_ver < 4)
+          new PhpCommand(cmd, args);
+        #else
+          new Php7Command(cmd, args);
+        #end
       case 'php7': new Php7Command(cmd, args);
       case 'python': new PythonCommand(cmd, args);
       case 'cs': new CsCommand(cmd, args);
