@@ -96,6 +96,12 @@ class Travix {
     
     if(Sys.getEnv('HAXELIB_RUN') == '1')
       Sys.setCwd(args.pop());
+
+    // Remove the first argument (target), add "--" to get the others
+    // into rest arguments.
+    var first = args.shift();
+    args.unshift("--");
+    args.unshift(first);
       
     tink.Cli.process(args, new Travix()).handle(tink.Cli.exit);
   }
