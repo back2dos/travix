@@ -50,16 +50,11 @@ class LuaCommand extends Command {
           installPackage('lua');
           installPackage('luarocks');
         }
-
-        // Install lua libraries
-        // Based on https://github.com/HaxeFoundation/haxe/blob/3a6d024019aad28ab138fbb88cade34ff2e5bf19/tests/RunCi.hx#L473
-        exec('eval', ['sudo luarocks install lrexlib-pcre 2.9.0-1']);
-        exec('eval', ['sudo luarocks install luv 1.9.1-1']);
-        exec('eval', ['sudo luarocks install luasocket 3.0rc1-2']);
-        exec('eval', ['sudo luarocks install environ 0.1.0-1']);
-        exec('eval', ['sudo luarocks install luautf8 0.1.1-1']);
       });
     }
+
+    // Install lua libraries
+    exec('sudo', 'luarocks install haxe-deps'.split(' '));
 
     // print the effective versions
     exec("luarocks", ['--version']);
