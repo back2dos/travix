@@ -10,7 +10,10 @@ class LuaCommand extends Command {
     if(command('eval', ['which luarocks >/dev/null']) != 0) {
       foldOutput('lua-install', function() {
         if(Travix.isLinux) {
-          var lsb = tryToRun('lsb_release', ['-s', '-c']).orNull();
+          var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
+            case Success(output): output;
+            case Failure(_): null;
+          }
           
           if(lsb == 'precise') {
             // Required repo for precise to build cmake
