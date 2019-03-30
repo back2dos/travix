@@ -80,7 +80,7 @@ class AuthCommand {
 			var cnx = HttpConnection.urlConnect('http://lib.haxe.org/api/3.0/index.n');
 			
 			// https://github.com/HaxeFoundation/haxelib/blob/302160b/src/haxelib/SiteApi.hx#L34
-			if(cnx.api.checkPassword.call([username, Md5.encode(password)])) {
+			if(cnx.resolve('api').resolve('checkPassword').call([username, Md5.encode(password)])) {
 				switch which(isWindows ? 'travis.bat' : 'travis') {
 					case Success(path):
 						var args = ['encrypt', 'HAXELIB_AUTH=$username:$password', '-r', repo];
