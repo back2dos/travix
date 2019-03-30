@@ -4,6 +4,8 @@ import tink.cli.Rest;
 
 import Sys.*;
 
+using StringTools;
+
 class LuaCommand extends Command {
   
   public function install() {
@@ -11,7 +13,7 @@ class LuaCommand extends Command {
       foldOutput('lua-install', function() {
         if(Travix.isLinux) {
           var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
-            case Success(output): output;
+            case Success(output): output.trim();
             case Failure(_): null;
           }
           
