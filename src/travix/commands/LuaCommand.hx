@@ -9,28 +9,37 @@ using StringTools;
 class LuaCommand extends Command {
   
   public function install() {
-    if(command('eval', ['which luarocks >/dev/null']) != 0) {
-      foldOutput('lua-install', function() {
-        if(Travix.isLinux) {
-          var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
-            case Success(output): output.trim();
-            case Failure(_): null;
-          }
-          
-          if(lsb == 'precise') {
+    if(Travix.isTravis) { // if(command('eval', ['which luarocks >/dev/null']) != 0) {
+      if(Travix.isLinux) {
+        var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
+          case Success(output): output.trim();
+          case Failure(_): null;
+        }
+        
+        Sys.println('lsb: $lsb');
+        
+        switch lsb {
+          case 'precise':
             // Required repo for precise to build cmake
             exec('eval', ['sudo add-apt-repository -y ppa:george-edison55/precise-backports']);
-          }
+          case 'trusty':
+            // Required repo for trusty to build cmake
+            Sys.println('preparing for trusty');
+            installPackage('software-properties-common');
+            exec('eval', ['sudo add-apt-repository -y ppa:george-edison55/cmake-3.x']);
+            exec('eval', ['sudo apt-get update']);
+        }
+        
+        installPackages([
+          "cmake",
+          "libpcre3",
+          "libpcre3-dev",
+          "lua5.2",
+          "make",
+          "unzip"
+        ]);
 
-          installPackages([
-            lsb == 'trusty' ? 'cmake3' : "cmake",
-            "libpcre3",
-            "libpcre3-dev",
-            "lua5.2",
-            "make",
-            "unzip"
-          ]);
-
+        foldOutput('luarocks-install', function() {
           var luaRocksVersion = '2.4.3';
 
           // Add source files so luarocks can be compiled
@@ -53,11 +62,12 @@ class LuaCommand extends Command {
 
           exec('rm', ['-f', 'luarocks-$luaRocksVersion.tar.gz']);
           exec('rm', ['-rf', 'luarocks-$luaRocksVersion']);
-        } else if(Travix.isMac) {
-          installPackage('lua');
-          installPackage('luarocks');
-        }
-      });
+        });
+        
+      } else if(Travix.isMac) {
+        installPackage('lua');
+        installPackage('luarocks');
+      }
     }
 
     // Install lua libraries
