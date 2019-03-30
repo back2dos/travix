@@ -10,13 +10,15 @@ class LuaCommand extends Command {
     if(command('eval', ['which luarocks >/dev/null']) != 0) {
       foldOutput('lua-install', function() {
         if(Travix.isLinux) {
-          if(command('eval', ['bash -c "[ \\"`lsb_release -s -c`\\" == \\"precise\\" ]"']) == 0) {
+          var lsb = tryToRun('lsb_release', ['-s', '-c']).orNull();
+          
+          if(lsb == 'precise') {
             // Required repo for precise to build cmake
             exec('eval', ['sudo add-apt-repository -y ppa:george-edison55/precise-backports']);
           }
 
           installPackages([
-            "cmake",
+            lsb == 'trusty' ? 'cmake3' : "cmake",
             "libpcre3",
             "libpcre3-dev",
             "lua5.2",
