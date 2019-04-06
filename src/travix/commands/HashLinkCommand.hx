@@ -61,16 +61,10 @@ class HashLinkCommand extends Command {
     var haxeVersion = getHaxeVersion();
     var supported = false;
     if(Travix.isMac) {
-      switch haxeVersion {
-        case '4.0.0-preview.1' | '4.0.0-preview.2': supported = true;
-        case _:
-      } 
+      haxeVersion.startsWith('4.');
     }
     if(Travix.isLinux) {
-      switch haxeVersion {
-        case '4.0.0-preview.4': supported = true;
-        case _:
-      }
+      haxeVersion.startsWith('4.') && haxeVersion != '4.0.0-preview.1' && haxeVersion != '4.0.0-preview.2' && haxeVersion != '4.0.0-preview.3';
     }
     
     if(!supported) travix.Logger.println('travix hl is not supported on Haxe $haxeVersion, skipping...');
