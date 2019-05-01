@@ -6,6 +6,10 @@
 		if(!window.process) window.process = {};
 		if(!process.stdout) process.stdout = {};
 		if(!process.stdout.write) process.stdout.write = console.log;
+		window.onerror = function(msg, url, line, col, e) {
+			window.travixThrow(e instanceof HaxeError ? e.val : e);
+			return true;
+		}
 	</script>
 	<script src="tests.js"></script>
 </body>

@@ -12,12 +12,12 @@ class JsCommand extends Command {
     if(!'bin/js'.exists()) 'bin/js'.createDirectory();
     withCwd('bin/js', function() {
       if(!'package.json'.exists()) 'package.json'.saveContent('{}');
-      exec('npm', ['i', '--save-dev', 'puppeteer']);
+      exec('npm', ['i', '--save-dev', 'puppeteer', 'http-server']);
     });
   }
 
   public function buildAndRun(rest:Rest<String>) {
-    build('js', ['-js', 'bin/js/tests.js'].concat(rest), function () {
+    build('js', ['-js', 'bin/js/tests.js', '--macro', 'addGlobalMetadata("js.Boot.HaxeError", "@:expose(\'HaxeError\')")'].concat(rest), function () {
       var index = 'bin/js/index.html';
       if(!index.exists()) index.saveContent(defaultIndexHtml());
       var run = 'bin/js/run.js';
