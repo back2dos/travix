@@ -19,5 +19,4 @@ var url = 'http://localhost:8912/index.html';
   ]);
   await page.evaluateOnNewDocument(() => console.log(window.navigator.userAgent)); // print user agent as a hint that we are running in a browser
   await page.goto(url);
-  await browser.close();
 })();
