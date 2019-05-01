@@ -9,6 +9,7 @@ class JsCommand extends Command {
 
   public function install() {
     new NodeCommand().install();
+    if(!'bin/js'.exists()) 'bin/js'.createDirectory();
     withCwd('bin/js', function() {
       if(!'package.json'.exists()) 'package.json'.saveContent('{}');
       exec('npm', ['i', '--save-dev', 'puppeteer']);
