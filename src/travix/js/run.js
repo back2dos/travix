@@ -10,6 +10,7 @@ var url = 'file://' + __dirname + '/index.html';
     page.exposeFunction('travixPrintln', s => process.stdout.write(s + '\n')),
     page.exposeFunction('travixExit', code => process.exit(code)),
   ]);
+  await page.evaluateOnNewDocument(() => console.log(window.navigator.userAgent)); // print user agent as a hint that we are running in a browser
   await page.goto(url);
   await browser.close();
 })();
