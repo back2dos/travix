@@ -5,7 +5,7 @@
 	  // a hack specifically for haxe.unit.TestRunner();
 		if(!window.process) window.process = {};
 		if(!process.stdout) process.stdout = {};
-		if(!process.stdout.write) process.stdout.write = function(s) {window.callPhantom({cmd: 'travix:print', message: s})};
+		if(!process.stdout.write) process.stdout.write = console.log;
 	</script>
 	<script src="tests.js"></script>
 </body>
