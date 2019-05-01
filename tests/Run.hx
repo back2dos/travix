@@ -1,41 +1,42 @@
 package;
 
-using buddy.Should;
+import tink.testrunner.*;
+import tink.unit.*;
 
-@colorize
-class Run extends buddy.SingleSuite {
-  public function new() {
-    describe("Using travix", {
-      #if (sys || nodejs)
-      describe("On Sys targets and Node.js", {
-        it("should exit with status 0 if everything went well", {
-          Sys.getCwd().should.not.be(null);
-        });
-      });
-      #elseif js
-      describe("On js", {
-        it("should run on phantomjs", {
-          js.Browser.navigator.userAgent.should.match(~/PhantomJS/);
-        });
-      });      
-      #elseif flash
-      describe("On Flash", {
-        it("tracing should work as usual", {
-          trace("Flash trace");
-          true.should.be(true);
-        });
-        it("should exit like a Sys target", {
-          // Will be done automatically by Buddy
-          true.should.be(true);
-        });
-      });
-      #else
-      describe("On other targets", {
-        it("should compile only", {
-          true.should.be(true);
-        });        
-      });
-      #end
-    });
-  }  
+#if (js && !nodejs)
+import js.Browser.*;
+#end
+
+@:asserts
+class Run {
+  static function main() {
+    Runner.run(TestBatch.make([
+      new Run(),
+    ])).handle(Runner.exit);
+  }
+  
+  function new() {}
+  
+  #if (sys || nodejs)
+  public function sys() {
+    asserts.assert(Sys.getCwd() != null);
+    return asserts.done();
+  }
+  #end
+  
+  #if (js && !nodejs)
+  public function js() {
+    asserts.assert(navigator.userAgent != null);
+    return asserts.done();
+  }
+  #end
+  
+  
+  #if flash
+  public function flash() {
+    trace('Flash trace should work as usual');
+    asserts.assert(true);
+    return asserts.done();
+  }
+  #end
 }
