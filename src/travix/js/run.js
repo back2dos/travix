@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const server = require('http-server').createServer({root: __dirname});
+const server = require('http-server-legacy').createServer({root: __dirname});
 var url = 'http://localhost:8912/index.html';
 
 (async () => {

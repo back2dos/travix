@@ -12,7 +12,7 @@ class JsCommand extends Command {
     if(!'bin/js'.exists()) 'bin/js'.createDirectory();
     withCwd('bin/js', function() {
       if(!'package.json'.exists()) 'package.json'.saveContent('{}');
-      exec('npm', ['i', '--save-dev', 'puppeteer', 'http-server']);
+      exec('npm', ['i', '--save-dev', 'puppeteer', 'http-server-legacy']);
     });
   }
 
