@@ -15,7 +15,7 @@
 		"ciscoheat"
 	],
 	"releasenote": "Hashlink updated to 1.6.",
-	"version": "0.12.2",
+	"version": "0.13.0",
 	"url": "http://github.com/back2dos/travix/",
 	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"dependencies": {
