@@ -18,7 +18,7 @@ class JsCommand extends Command {
 
   public function buildAndRun(rest:Rest<String>) {
     build('js', ['-js', 'bin/js/tests.js', '--macro', 'addGlobalMetadata("js.Boot.HaxeError", "@:expose(\'HaxeError\')")'].concat(rest), function () {
-      var index = 'bin/js/index.html';
+      var index = 'bin/js/run.html';
       if(!index.exists()) index.saveContent(defaultIndexHtml());
       var run = 'bin/js/run.js';
       if(!run.exists()) run.saveContent(defaultRunScript());
