@@ -14,8 +14,8 @@
 		"kevinresol",
 		"ciscoheat"
 	],
-	"releasenote": "Hashlink updated to 1.6.",
-	"version": "0.13.0",
+	"releasenote": "Use puppeteer to run js + many fixes",
+	"version": "0.13.1",
 	"url": "http://github.com/back2dos/travix/",
 	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"dependencies": {
