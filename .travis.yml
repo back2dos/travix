@@ -1,6 +1,5 @@
 sudo: required
-dist: trusty
-# dist: xenial
+dist: xenial
 
 stages:
   - test
