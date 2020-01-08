@@ -1,7 +1,0 @@
-{
-    "haxe.displayConfigurations": [
-        ["tests.hxml", "-lib", "travix", "-lib", "hxnodejs"]
-    ],
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-}
