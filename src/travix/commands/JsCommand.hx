@@ -12,8 +12,15 @@ class JsCommand extends Command {
     if(!'bin/js'.exists()) 'bin/js'.createDirectory();
     withCwd('bin/js', function() {
       if(!'package.json'.exists()) 'package.json'.saveContent('{}');
-      if (!'node_modules/puppeteer'.exists())
+      if (!'node_modules/puppeteer'.exists()) {
+        switch Sys.getEnv('PUPPETEER_EXECUTABLE_PATH') {
+          case null:
+          case v if (v.exists()):
+            Sys.putEnv('PUPPETEER_SKIP_CHROMIUM_DOWNLOAD', 'true');
+          default:
+        }
         exec('npm', ['i', '--save-dev', 'puppeteer', 'http-server-legacy']);
+      }
     });
   }
 
