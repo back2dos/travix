@@ -176,7 +176,7 @@ class Command {
     if (args != null) {
       a = a.concat(args);
       if (isWindows) {//this is pure madness
-        cmd = [cmd].concat(args.map(a -> '"${a.replace('"', '""')}"')).join(' ');
+        cmd = [cmd].concat(args.map(function (a) return '"${a.replace('"', '""')}"')).join(' ');
         args = null;
       }
     }

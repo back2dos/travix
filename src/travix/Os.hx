@@ -4,9 +4,9 @@ using tink.CoreApi;
 using StringTools;
 
 typedef CommandResult = {
-  final code:Int;
-  final stdout:String;
-  final stderr:String;
+  var code(default, null):Int;
+  var stdout(default, null):String;
+  var stderr(default, null):String;
 }
 
 class Os {
