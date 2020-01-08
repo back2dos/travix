@@ -91,7 +91,7 @@ class Command {
               case null | '': lib;
               case v: '$lib#$v';
             }
-            exec('lix', ['install haxelib:$lib']);
+            exec('lix', ['install', 'haxelib:$lib']);
           default:
             switch version {
               case null | '':
