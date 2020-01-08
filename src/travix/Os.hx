@@ -30,16 +30,21 @@ class Os {
         var ret = js.node.ChildProcess.spawnSync(cmd, args);
         function str(buf:js.node.Buffer)
           return buf.toString();
-        if (ret.status == 0)
-          Success(str(ret.stderr) + str(ret.stdout));
-        else
-          Failure(ret.status, str(ret.stderr));
+        Success({
+          code: ret.status,
+          stdout: str(ret.stdout),
+          stderr: str(ret.stderr),
+        });
       #else
         var p = new sys.io.Process(cmd, args);
+
+        function str(buf:haxe.io.Input)
+          return buf.readAll().toString();
+
         Success({
           code: p.exitCode(),
-          stdout: p.stdout.readAll().toString(),
-          stderr: p.stderr.readAll().toString(),
+          stdout: str(p.stdout),
+          stderr: str(p.stderr),
         });
       #end
     }
