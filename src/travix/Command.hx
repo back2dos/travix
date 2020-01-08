@@ -85,12 +85,21 @@ class Command {
 
     foldOutput('installLib-$lib', function() {
       if (!libInstalled(lib))
-      switch version {
-        case null | '':
-          exec('haxelib', ['install', lib, '--always']);
-        default:
-          exec('haxelib', ['install', lib, version, '--always']);
-        }
+        switch which('lix') {
+          case Success(cmd):
+            var arg = switch version {
+              case null | '': lib;
+              case v: '$lib#$v';
+            }
+            exec('lix', ['install haxelib:$lib']);
+          default:
+            switch version {
+              case null | '':
+                exec('haxelib', ['install', lib, '--always']);
+              default:
+                exec('haxelib', ['install', lib, version, '--always']);
+              }
+          }
     });
   }
 
