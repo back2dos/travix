@@ -79,7 +79,7 @@ class Command {
   }
 
   function libInstalled(lib:String)
-    return tryToRun('haxelib', ['path', lib]).match(Success(_));
+    return tryToRun(force(which('haxelib')), ['path', lib]).match(Success(_));
 
   function installLib(lib:String, ?version = '') {
 
