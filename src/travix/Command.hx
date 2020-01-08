@@ -47,10 +47,10 @@ class Command {
     return throw 'unreachable';
   }
 
-  function tryToRun(cmd:String, ?params:Array<String>)
+  function tryToRun(cmd:String, ?args:Array<String>)
     return try {
       #if (hxnodejs && !macro)
-        var ret = js.node.ChildProcess.spawnSync(cmd, params);
+        var ret = js.node.ChildProcess.spawnSync(cmd, args);
         function str(buf:js.node.Buffer)
           return buf.toString();
         if (ret.status == 0)
@@ -58,7 +58,7 @@ class Command {
         else
           Failure(ret.status, str(ret.stderr));
       #else
-      var p = new Process(cmd, params);
+      var p = new Process(cmd, args);
       switch p.exitCode() {
         case 0:
           Success(switch p.stdout.readAll().toString() {
@@ -73,14 +73,14 @@ class Command {
       Failure(404, 'Unknown command $cmd');
     }
 
-  function run(cmd:String, ?params:Array<String>) {
+  function run(cmd:String, ?args:Array<String>) {
     var a = [cmd];
-    if (params != null)
-      a = a.concat(params);
+    if (args != null)
+      a = a.concat(args);
 
     print('> ${a.join(" ")} ...');
     return
-      switch tryToRun(cmd, params) {
+      switch tryToRun(cmd, args) {
         case Success(v):
           println(' done');
           v;
@@ -138,7 +138,7 @@ class Command {
       case Some(info): args = args.concat(['-lib', info.name]);
     }
     if(Travix.TESTS.exists()) args.push(Travix.TESTS);
-    
+
     foldOutput('build-$tag', exec.bind('haxe', args));
     run();
   }
