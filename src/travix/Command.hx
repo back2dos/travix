@@ -176,10 +176,17 @@ class Command {
     }
   #end
 
-  function exec(cmd, ?args) {
+  static var isWindows = Sys.systemName() == 'Windows';
+
+  function exec(cmd, ?args:Array<String>) {
     var a = [cmd];
-    if (args != null)
+    if (args != null) {
       a = a.concat(args);
+      if (isWindows) {//this is pure madness
+        cmd = [cmd].concat(args.map(a -> '"${a.replace('"', '""')}"')).join(' ');
+        args = null;
+      }
+    }
     println('> ' + a.join(' '));
     switch command(cmd, args) {
       case 0:
