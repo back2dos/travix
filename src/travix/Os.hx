@@ -2,6 +2,7 @@ package travix;
 
 using tink.CoreApi;
 using StringTools;
+using haxe.io.Path;
 
 typedef CommandResult = {
   var code(default, null):Int;
@@ -65,7 +66,19 @@ class Os {
       }
 
   static public function which(cmd:String) {
-		return cmdOutput(isWindows ? 'where' : 'which', [cmd])
-			.map(function(path) return path.replace('\r\n', '\n').split('\n')[0]);
+		return switch cmdOutput(isWindows ? 'where' : 'which', [cmd]) {
+      case Failure(e): Failure(e);
+      case Success(out) if (isWindows):
+        var ret = Failure(new Error(404, 'could not find $cmd'));
+        for (l in out.split('\n'))
+          switch l.trim() {
+            case _.extension() => null | '':
+            case v:
+              ret = Success(v);
+              break;
+          }
+        ret;
+      case Success(out): Success(out.split('\n')[0]);
+    }
   }
 }
