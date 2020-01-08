@@ -2,6 +2,7 @@ package travix;
 
 import Sys.*;
 import sys.io.Process;
+import travix.Os.*;
 
 using StringTools;
 using haxe.io.Path;
@@ -48,29 +49,14 @@ class Command {
   }
 
   function tryToRun(cmd:String, ?args:Array<String>)
-    return try {
-      #if (hxnodejs && !macro)
-        var ret = js.node.ChildProcess.spawnSync(cmd, args);
-        function str(buf:js.node.Buffer)
-          return buf.toString();
-        if (ret.status == 0)
-          Success(str(ret.stderr) + str(ret.stdout));
-        else
-          Failure(ret.status, str(ret.stderr));
-      #else
-      var p = new Process(cmd, args);
-      switch p.exitCode() {
-        case 0:
-          Success(switch p.stdout.readAll().toString() {
-            case '': p.stderr.readAll().toString(); //some execs print to stderr
-            case v: v;
-          });
-        case v:
-          Failure(v, p.stderr.readAll().toString());
-      }
-      #end
-    } catch (e:Dynamic) {
-      Failure(404, 'Unknown command $cmd');
+    return
+      switch cmdResult(cmd, args) {
+        case Success({ code: 0, stdout: '', stderr: v } | { code: 0, stdout: v }):
+          Success(v);
+        case Success({ code: code, stderr: msg }):
+          Failure(code, msg);
+        case Failure(e):
+          Failure(e.code, e.message);
     }
 
   function run(cmd:String, ?args:Array<String>) {
@@ -175,8 +161,6 @@ class Command {
         return js.node.ChildProcess.spawnSync(cmd, args, cast {stdio: "inherit", shell: true }).status;
     }
   #end
-
-  static var isWindows = Sys.systemName() == 'Windows';
 
   function exec(cmd, ?args:Array<String>) {
     var a = [cmd];
