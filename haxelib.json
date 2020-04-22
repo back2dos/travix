@@ -1,24 +1,24 @@
 {
 	"name": "travix",
-	"license": "MIT",
+	"description": "Travis helper for Haxe",
+	"classPath": "src",
+	"dependencies": {
+		"tink_cli": ""
+	},
+	"url": "http://github.com/back2dos/travix/",
+	"contributors": [
+		"back2dos",
+		"kevinresol",
+		"ciscoheat"
+	],
+	"postDownload": "haxe -cp src --run travix.PostDownload",
+	"version": "0.14.0",
+	"releasenote": "Better lix support. Don't download puppeteer if it's already there.",
 	"tags": [
 		"ci",
 		"travis",
 		"build",
 		"tool"
 	],
-	"classPath": "src",
-	"description": "Travis helper for Haxe",
-	"contributors": [
-		"back2dos",
-		"kevinresol",
-		"ciscoheat"
-	],
-	"releasenote": "Use puppeteer to run js + many fixes",
-	"version": "0.13.1",
-	"url": "http://github.com/back2dos/travix/",
-	"postDownload": "haxe -cp src --run travix.PostDownload",
-	"dependencies": {
-		"tink_cli": ""
-	}
+	"license": "MIT"
 }
