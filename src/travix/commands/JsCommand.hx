@@ -19,7 +19,7 @@ class JsCommand extends Command {
             Sys.putEnv('PUPPETEER_SKIP_CHROMIUM_DOWNLOAD', 'true');
           default:
         }
-        exec('npm', ['i', '--save-dev', 'puppeteer', 'http-server-legacy']);
+        exec('npm', ['i', '--save-dev', 'puppeteer@2', 'http-server-legacy']);
       }
     });
   }
