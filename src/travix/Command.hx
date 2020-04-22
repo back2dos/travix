@@ -2,6 +2,7 @@ package travix;
 
 import Sys.*;
 import sys.io.Process;
+import travix.Os.*;
 
 using StringTools;
 using haxe.io.Path;
@@ -47,40 +48,25 @@ class Command {
     return throw 'unreachable';
   }
 
-  function tryToRun(cmd:String, ?params:Array<String>)
-    return try {
-      #if (hxnodejs && !macro)
-        var ret = js.node.ChildProcess.spawnSync(cmd, params);
-        function str(buf:js.node.Buffer)
-          return buf.toString();
-        if (ret.status == 0)
-          Success(str(ret.stderr) + str(ret.stdout));
-        else
-          Failure(ret.status, str(ret.stderr));
-      #else
-      var p = new Process(cmd, params);
-      switch p.exitCode() {
-        case 0:
-          Success(switch p.stdout.readAll().toString() {
-            case '': p.stderr.readAll().toString(); //some execs print to stderr
-            case v: v;
-          });
-        case v:
-          Failure(v, p.stderr.readAll().toString());
-      }
-      #end
-    } catch (e:Dynamic) {
-      Failure(404, 'Unknown command $cmd');
+  function tryToRun(cmd:String, ?args:Array<String>)
+    return
+      switch cmdResult(cmd, args) {
+        case Success({ code: 0, stdout: '', stderr: v } | { code: 0, stdout: v }):
+          Success(v);
+        case Success({ code: code, stderr: msg }):
+          Failure(code, msg);
+        case Failure(e):
+          Failure(e.code, e.message);
     }
 
-  function run(cmd:String, ?params:Array<String>) {
+  function run(cmd:String, ?args:Array<String>) {
     var a = [cmd];
-    if (params != null)
-      a = a.concat(params);
+    if (args != null)
+      a = a.concat(args);
 
     print('> ${a.join(" ")} ...');
     return
-      switch tryToRun(cmd, params) {
+      switch tryToRun(cmd, args) {
         case Success(v):
           println(' done');
           v;
@@ -93,18 +79,27 @@ class Command {
   }
 
   function libInstalled(lib:String)
-    return tryToRun('haxelib', ['path', lib]).match(Success(_));
+    return tryToRun(force(which('haxelib')), ['path', lib]).match(Success(_));
 
   function installLib(lib:String, ?version = '') {
 
     foldOutput('installLib-$lib', function() {
       if (!libInstalled(lib))
-      switch version {
-        case null | '':
-          exec('haxelib', ['install', lib, '--always']);
-        default:
-          exec('haxelib', ['install', lib, version, '--always']);
-        }
+        switch which('lix') {
+          case Success(cmd):
+            var arg = switch version {
+              case null | '': lib;
+              case v: '$lib#$v';
+            }
+            exec('lix', ['install', 'haxelib:$lib']);
+          default:
+            switch version {
+              case null | '':
+                exec('haxelib', ['install', lib, '--always']);
+              default:
+                exec('haxelib', ['install', lib, version, '--always']);
+              }
+          }
     });
   }
 
@@ -138,7 +133,7 @@ class Command {
       case Some(info): args = args.concat(['-lib', info.name]);
     }
     if(Travix.TESTS.exists()) args.push(Travix.TESTS);
-    
+
     foldOutput('build-$tag', exec.bind('haxe', args));
     run();
   }
@@ -176,10 +171,15 @@ class Command {
     }
   #end
 
-  function exec(cmd, ?args) {
+  function exec(cmd, ?args:Array<String>) {
     var a = [cmd];
-    if (args != null)
+    if (args != null) {
       a = a.concat(args);
+      if (isWindows) {//this is pure madness
+        cmd = [cmd].concat(args.map(function (a) return '"${a.replace('"', '""')}"')).join(' ');
+        args = null;
+      }
+    }
     println('> ' + a.join(' '));
     switch command(cmd, args) {
       case 0:

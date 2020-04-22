@@ -26,30 +26,30 @@ class Travix {
   public static inline var TESTS = 'tests.hxml';
   static inline var TRAVIX_COUNTER = '.travix_counter';
   static inline var HAXELIB_CONFIG = 'haxelib.json';
-  
+
   // env
   public static var isTravis = getEnv('TRAVIS') == 'true';
   public static var isAppVeyor = getEnv('APPVEYOR') == 'True';
   public static var isCI = getEnv('CI') != null;
-  
+
   // repeated calls, but ok...
   public static var isLinux = systemName() == 'Linux';
   public static var isMac = systemName() == 'Mac';
   public static var isWindows = systemName() == 'Windows';
-  
+
   public static var counter = 0;
-  
+
   public static function getInfos():Option<Infos> {
     return if(HAXELIB_CONFIG.exists()) Some(haxe.Json.parse(HAXELIB_CONFIG.getContent())) else None;
   }
-    
+
   /**
    * @return fully qualified class name of the main class
    */
   public static function getMainClassFQName():String {
-    
+
     function read(file:String) {
-      for (line in file.getContent().split('\n').map(function (s:String) return s.split('#')[0].trim())) 
+      for (line in file.getContent().split('\n').map(function (s:String) return s.split('#')[0].trim()))
         if (line.startsWith('-main'))
           return Some(line.substr(5).trim());
         else
@@ -58,10 +58,10 @@ class Travix {
               case None:
               case v: return v;
             }
-            
+
       return None;
     }
-    
+
     var args = Sys.args();
     for(i in 0...args.length) {
       if(args[i] == '-main') return args[i + 1];
@@ -70,15 +70,15 @@ class Travix {
         case Some(v): return v;
       }
     }
-    
+
     if(TESTS.exists()) switch read(TESTS) {
       case None: // do nothing
       case Some(v): return v;
     }
-    
+
     return die('no -main class found');
   }
-  
+
   /**
    * @return non-qualified class name of the main class (i.e. without package)
    */
@@ -94,12 +94,12 @@ class Travix {
 
   static function main() {
     incrementCounter();
-    
+
     var args = Sys.args();
-    
+
     if(Sys.getEnv('HAXELIB_RUN') == '1')
       Sys.setCwd(args.pop());
-      
+
     tink.Cli.process(args, new Travix()).handle(tink.Cli.exit);
   }
 
@@ -108,10 +108,10 @@ class Travix {
       counter = TRAVIX_COUNTER.exists() ? Std.parseInt(TRAVIX_COUNTER.getContent()) : 0;
       TRAVIX_COUNTER.saveContent(Std.string(counter+1));
     }
-    
+
   function new() {}
-  
-  
+
+
   /**
    * Show help
    */
@@ -119,36 +119,36 @@ class Travix {
   public function help() {
     println(tink.Cli.getDoc(this, new tink.cli.doc.DefaultFormatter('travix')));
   }
-  
+
   /**
    * Install haxelib dependencies
    */
   @:command public var install = new InstallCommand();
-  
+
   /**
    * Run tests without installing stuff
    */
   @:command public var run = new RunCommand();
-  
+
   /**
    *  initializes a project with a .travis.yml
    */
-  @:command 
+  @:command
   public function init()
     new InitCommand().doIt();
-    
+
   /**
    * Authorize haxelib
    */
-  @:command 
+  @:command
   public var auth = new AuthCommand();
   /**
    * Release to haxelib
    */
-  @:command 
+  @:command
   public function release(rest:Rest<String>)
     new ReleaseCommand().doIt(rest);
-  
+
   /**
    *  Run tests on cs
    */
@@ -158,7 +158,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on node
    */
@@ -168,7 +168,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on cpp
    */
@@ -178,7 +178,8 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
+  #if !nodejs
   /**
    *  Run tests on flash
    */
@@ -188,7 +189,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-
+  #end
   /**
    *  Run tests on hashlink
    */
@@ -208,7 +209,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on java
    */
@@ -218,7 +219,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on js
    */
@@ -228,7 +229,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on lua
    */
@@ -238,7 +239,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on neko
    */
@@ -248,7 +249,7 @@ class Travix {
     command.install();
     command.buildAndRun(rest);
   }
-  
+
   /**
    *  Run tests on php
    */
@@ -259,7 +260,7 @@ class Travix {
     command.buildAndRun(rest);
     command.uninstall();
   }
-  
+
   /**
    *  Run tests on php7
    */
@@ -270,7 +271,7 @@ class Travix {
     command.buildAndRun(rest);
     command.uninstall();
   }
-  
+
   /**
    *  Run tests on python
    */

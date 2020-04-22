@@ -1,3 +1,5 @@
 # @run: haxelib run-dir travix .
 -cp src
+-lib tink_cli
+-lib hx3compat
 -D travix

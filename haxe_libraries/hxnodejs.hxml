@@ -1,6 +1,6 @@
--D hxnodejs=6.9.1
-# @install: lix --silent download "gh://github.com/haxefoundation/hxnodejs#974f456cfa90c0ca1cc92681eca8665e40b4ab1f" into hxnodejs/6.9.1/github/974f456cfa90c0ca1cc92681eca8665e40b4ab1f
--cp ${HAXE_LIBCACHE}/hxnodejs/6.9.1/github/974f456cfa90c0ca1cc92681eca8665e40b4ab1f/src
+-D hxnodejs=10.0.0
+# @install: lix --silent download "haxelib:/hxnodejs#10.0.0" into hxnodejs/10.0.0/haxelib
+-cp ${HAXE_LIBCACHE}/hxnodejs/10.0.0/haxelib/src
 --macro allowPackage('sys')
 # should behave like other target defines and not be defined in macro context
 --macro define('nodejs')
