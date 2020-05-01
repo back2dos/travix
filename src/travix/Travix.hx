@@ -40,7 +40,17 @@ class Travix {
   public static var counter = 0;
 
   public static function getInfos():Option<Infos> {
-    return if(HAXELIB_CONFIG.exists()) Some(haxe.Json.parse(HAXELIB_CONFIG.getContent())) else None;
+    return
+      if(HAXELIB_CONFIG.exists()) Some(
+        try
+          haxe.Json.parse(
+            try HAXELIB_CONFIG.getContent()
+            catch (e:Dynamic) die('Failed to read haxelib.json: $e')
+          )
+        catch (e:Dynamic)
+          die('Parse error in haxelib.json: $e')
+      )
+      else None;
   }
 
   /**
