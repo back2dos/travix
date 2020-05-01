@@ -12,8 +12,8 @@
 		"ciscoheat"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
-	"version": "0.14.0",
-	"releasenote": "Better lix support. Don't download puppeteer if it's already there.",
+	"version": "0.14.1",
+	"releasenote": "Make travix js work on windows.",
 	"tags": [
 		"ci",
 		"travis",
