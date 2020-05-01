@@ -3,3 +3,4 @@
 -lib tink_cli
 -lib hx3compat
 -D travix
+extraParams.hxml
