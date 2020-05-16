@@ -86,6 +86,13 @@ class InstallCommand extends Command {
     new JavaCommand().install();
 
   /**
+   * Install dependencies for the jvm target
+   */
+  @:command
+  public function jvm()
+    java();
+
+  /**
    * Install dependencies for the js target
    */
   @:command

@@ -231,6 +231,14 @@ class Travix {
   }
 
   /**
+   *  Run tests on jvm
+   */
+  @:command
+  public function jvm(rest:Rest<String>) {
+    java(['-D','jvm'].concat(rest));
+  }
+
+  /**
    *  Run tests on js
    */
   @:command

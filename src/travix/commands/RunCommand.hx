@@ -62,6 +62,13 @@ class RunCommand {
     new JavaCommand().buildAndRun(rest);
 
   /**
+   * Build and run test on the jvm target
+   */
+  @:command
+  public function jvm(rest:Rest<String>)
+    java(['-D','jvm'].concat(rest));
+
+  /**
    * Build and run test on the js target
    */
   @:command
