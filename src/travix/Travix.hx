@@ -162,7 +162,7 @@ class Travix {
   /**
    *  Run tests on cs
    */
-  @:command('cs', 'cs123456', 'cs123457')
+  @:command
   public function cs(rest:Rest<String>) {
     var command = new CsCommand();
     command.install();
