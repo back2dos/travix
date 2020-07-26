@@ -39,4 +39,12 @@ class Run {
     return asserts.done();
   }
   #end
+  
+  #if lua
+  public function setEnv() {
+    Sys.putEnv('TRAVIX_LUA', 'true');
+    asserts.assert(Sys.getEnv('TRAVIX_LUA') == 'true', 'Make sure environ is installed');
+    return asserts.done();
+  }
+  #end
 }
