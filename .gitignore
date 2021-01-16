@@ -1,3 +1,8 @@
+# eclipse files
+.settings/
+.project
+**/.*.md.html
+
 bin
 /.vagrant
 run.n
