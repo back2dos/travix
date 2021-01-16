@@ -7,8 +7,6 @@ import travix.*;
  */
 class InstallCommand extends Command {
 
-	static inline var TESTS = @:privateAccess Travix.TESTS;
-
   /**
    * Install haxelib dependencies
    */
@@ -17,7 +15,7 @@ class InstallCommand extends Command {
 
     switch Travix.getInfos() {
       case None:
-        Travix.die('$TESTS not found');
+        Travix.die('${Travix.TESTS} not found');
 
       case Some(info):
         run('haxelib', ['dev', info.name, '.']);
@@ -28,7 +26,7 @@ class InstallCommand extends Command {
           for (lib in v.keys())
           installLib(lib, v[lib]);
         }
-        run('haxelib', ['install', TESTS, '--always']);
+        run('haxelib', ['install', Travix.TESTS, '--always']);
 
         exec('haxelib', ['list']);
     }

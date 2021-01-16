@@ -19,8 +19,6 @@ class InitCommand extends Command {
 
   static inline var GITHUB_ACTIONS_CONFIG = '.github/workflows/build.yml';
   static inline var TRAVIS_CONFIG = '.travis.yml';
-  static inline var TESTS = @:privateAccess Travix.TESTS;
-  static inline var HAXELIB_CONFIG = @:privateAccess Travix.HAXELIB_CONFIG;
 
   var ci:String;
 
@@ -59,8 +57,8 @@ class InitCommand extends Command {
     makeYml();
     makeJson(source);
 
-    if (!TESTS.exists()) {
-      println('no $TESTS found');
+    if (!Travix.TESTS.exists()) {
+      println('no ${Travix.TESTS} found');
 
       var cp = enter('class path for tests', 'tests');
       var main = 'RunTests';
@@ -73,7 +71,7 @@ class InitCommand extends Command {
 
       main = enter('test entry point', main);
 
-      TESTS.saveContent([
+      Travix.TESTS.saveContent([
         '-cp $cp',
         '-main $main',
         '-dce full',
@@ -143,7 +141,7 @@ class InitCommand extends Command {
   }
 
   function makeJson(source:ProjectSource) {
-    if (HAXELIB_CONFIG.exists()) return;
+    if (Travix.HAXELIB_CONFIG.exists()) return;
 
     function defaultClassPath() {
       for (option in 'src,hx'.split(','))
@@ -176,7 +174,7 @@ class InitCommand extends Command {
       default:
     }
 
-    HAXELIB_CONFIG.saveContent(Json.stringify(infos, '  '));
+    Travix.HAXELIB_CONFIG.saveContent(Json.stringify(infos, '  '));
   }
 
   macro static function defaultGithubActionsFile() {

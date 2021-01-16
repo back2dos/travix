@@ -23,20 +23,20 @@ import haxe.macro.Context;
  * CI Helper for Haxe
  */
 class Travix {
-  public static inline var TESTS = 'tests.hxml';
-  static inline var TRAVIX_COUNTER = '.travix_counter';
-  static inline var HAXELIB_CONFIG = 'haxelib.json';
+  public static var TESTS(default, null) = 'tests.hxml';
+  public static var TRAVIX_COUNTER(default, null) = '.travix_counter';
+  public static var HAXELIB_CONFIG(default, null) = 'haxelib.json';
 
   // env
-  public static var isCI = getEnv('CI') != null;
-  public static var isAppVeyor = getEnv('APPVEYOR') == 'True';
-  public static var isGithubActions = getEnv('GITHUB_ACTIONS') == 'true';
-  public static var isTravis = getEnv('TRAVIS') == 'true';
+  public static var isCI(default, never) = getEnv('CI') != null;
+  public static var isAppVeyor(default, never) = getEnv('APPVEYOR') == 'True';
+  public static var isGithubActions(default, never) = getEnv('GITHUB_ACTIONS') == 'true';
+  public static var isTravis(default, never) = getEnv('TRAVIS') == 'true';
 
   // repeated calls, but ok...
-  public static var isLinux = systemName() == 'Linux';
-  public static var isMac = systemName() == 'Mac';
-  public static var isWindows = systemName() == 'Windows';
+  public static var isLinux(default, never) = systemName() == 'Linux';
+  public static var isMac(default, never) = systemName() == 'Mac';
+  public static var isWindows(default, never) = systemName() == 'Windows';
 
   public static var counter = 0;
 
@@ -110,6 +110,11 @@ class Travix {
 
     if(Sys.getEnv('HAXELIB_RUN') == '1')
       Sys.setCwd(args.pop());
+
+    // converting to absolute paths now since the CWD can change later, e.g. via Command#withCwd
+    TESTS = TESTS.absolutePath();
+    TRAVIX_COUNTER = TRAVIX_COUNTER.absolutePath();
+    HAXELIB_CONFIG = HAXELIB_CONFIG.absolutePath();
 
     tink.Cli.process(args, new Travix()).handle(tink.Cli.exit);
   }
