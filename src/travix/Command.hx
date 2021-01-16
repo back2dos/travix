@@ -106,8 +106,10 @@ class Command {
   function foldOutput<T>(tag:String, func:Void->T) {
     tag = tag.replace('+', 'plus');
     if(Travix.isTravis) Sys.println('travis_fold:start:$tag.${Travix.counter}');
+    else if(Travix.isGithubActions) Sys.println('::group::$tag');
     var result = func();
     if(Travix.isTravis) Sys.println('travis_fold:end:$tag.${Travix.counter}');
+    else if(Travix.isGithubActions) Sys.println('::endgroup::');
     return result;
   }
 

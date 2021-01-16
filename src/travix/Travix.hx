@@ -28,9 +28,10 @@ class Travix {
   static inline var HAXELIB_CONFIG = 'haxelib.json';
 
   // env
-  public static var isTravis = getEnv('TRAVIS') == 'true';
-  public static var isAppVeyor = getEnv('APPVEYOR') == 'True';
   public static var isCI = getEnv('CI') != null;
+  public static var isAppVeyor = getEnv('APPVEYOR') == 'True';
+  public static var isGithubActions = getEnv('GITHUB_ACTIONS') == 'true';
+  public static var isTravis = getEnv('TRAVIS') == 'true';
 
   // repeated calls, but ok...
   public static var isLinux = systemName() == 'Linux';
@@ -144,8 +145,8 @@ class Travix {
    *  initializes a project with a .travis.yml
    */
   @:command
-  public function init()
-    new InitCommand().doIt();
+  public function init(prompt:tink.cli.Prompt)
+    new InitCommand().doIt(prompt);
 
   /**
    * Authorize haxelib
