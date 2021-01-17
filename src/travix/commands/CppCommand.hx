@@ -9,7 +9,7 @@ class CppCommand extends Command {
 
   public function install() {
     if (getEnv('TRAVIS_HAXE_VERSION') == 'development') {
-      if(Travix.isLinux) {
+      if(Os.isLinux) {
           installPackage('gcc-multilib');
           installPackage('g++-multilib');
       }
@@ -26,12 +26,12 @@ class CppCommand extends Command {
       }
     }
     else installLib('hxcpp');
-    
+
     var main = Travix.getMainClassLocalName();
     build('cpp', ['-cpp', 'bin/cpp'].concat(rest), function () {
-      var outputFile = main + (isDebugBuild(rest) ? '-debug' : '') + (Travix.isWindows ? '.exe' : '');
+      var outputFile = main + (isDebugBuild(rest) ? '-debug' : '') + (Os.isWindows ? '.exe' : '');
       var path = './bin/cpp/$outputFile';
-      if(Travix.isWindows) path = path.replace('/', '\\');
+      if(Os.isWindows) path = path.replace('/', '\\');
       exec(path);
     });
   }

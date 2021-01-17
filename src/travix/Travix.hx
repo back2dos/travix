@@ -33,11 +33,6 @@ class Travix {
   public static var isGithubActions(default, never) = getEnv('GITHUB_ACTIONS') == 'true';
   public static var isTravis(default, never) = getEnv('TRAVIS') == 'true';
 
-  // repeated calls, but ok...
-  public static var isLinux(default, never) = systemName() == 'Linux';
-  public static var isMac(default, never) = systemName() == 'Mac';
-  public static var isWindows(default, never) = systemName() == 'Windows';
-
   public static var counter = 0;
 
   public static function getInfos():Option<Infos> {

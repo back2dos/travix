@@ -6,11 +6,11 @@ class CsCommand extends Command {
 
   public function install() {
 
-    if (Travix.isMac) {
+    if (Os.isMac) {
 
       installPackage('mono');
 
-    } else if (Travix.isLinux) {
+    } else if (Os.isLinux) {
 
       // http://www.mono-project.com/download/#download-lin
       exec('eval', ['sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF']);
@@ -40,7 +40,7 @@ class CsCommand extends Command {
 
     build('cs', ['-cs', 'bin/cs/'].concat(rest), function () {
       var outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
-      if (Travix.isWindows)
+      if (Os.isWindows)
         exec('bin\\cs\\bin\\$outputFile.exe');
       else
         exec('mono', ['bin/cs/bin/$outputFile.exe']);

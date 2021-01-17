@@ -14,10 +14,10 @@ class FlashCommand extends Command {
     var versionStr = update.get("version");
     return versionStr.split(",").map(Std.parseInt);
   }
-  
+
   public function install() {
 
-    if(!Travix.isLinux) {
+    if(!Os.isLinux) {
       println('Don\'t know how to install Flash on ' + systemName());
       return;
     }
@@ -66,11 +66,12 @@ class FlashCommand extends Command {
   }
 
   public function buildAndRun(rest:Rest<String>) {
+    if(!Os.isLinux) {
+      println('Don\'t know how to run Flash on ' + systemName());
+      return;
+    }
+
     build('flash', ['-swf', 'bin/swf/tests.swf', '-D', 'flash-exit'].concat(rest), function () {
-      if(Travix.isMac) {
-        println('Cannot run Flash on Mac');
-        return;
-      }
       // The flash player has some issues with unexplained crashes,
       // but if it runs about 7 times, it should succeed one of those.
       var ok = false;

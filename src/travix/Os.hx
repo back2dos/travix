@@ -11,7 +11,10 @@ typedef CommandResult = {
 }
 
 class Os {
-  static public var isWindows(default, never):Bool = Sys.systemName() == 'Windows';
+  public static var isLinux(default, never) = Sys.systemName() == 'Linux';
+  public static var isMac(default, never) = Sys.systemName() == 'Mac';
+  public static var isWindows(default, never) = Sys.systemName() == 'Windows';
+
   static public function force<T>(o:Outcome<T, Error>)
     return switch o {
       case Success(v): v;
@@ -20,6 +23,7 @@ class Os {
         Sys.exit(e.code);
         throw 'unreachable';
     }
+
   /**
    * Attempts to run a command.
    * - results in failure if process creation fails
@@ -65,8 +69,8 @@ class Os {
         case Failure(e): Failure(e);
       }
 
-  static public function which(cmd:String) {
-		return switch cmdOutput(isWindows ? 'where' : 'which', [cmd]) {
+  static public function which(cmd:String):Outcome<String, Error> {
+    return switch cmdOutput(isWindows ? 'where' : 'which', [cmd]) {
       case Failure(e): Failure(e);
       case Success(out) if (isWindows):
         var ret = Failure(new Error(404, 'could not find $cmd'));

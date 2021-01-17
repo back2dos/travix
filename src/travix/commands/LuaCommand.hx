@@ -10,7 +10,7 @@ class LuaCommand extends Command {
 
   public function install() {
     if(Travix.isTravis || Travix.isGithubActions) { // if(command('eval', ['which luarocks >/dev/null']) != 0) {
-      if(Travix.isLinux) {
+      if(Os.isLinux) {
         var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
           case Success(output): output.trim();
           case Failure(_): null;
@@ -64,7 +64,7 @@ class LuaCommand extends Command {
           exec('rm', ['-rf', 'luarocks-$luaRocksVersion']);
         });
 
-      } else if(Travix.isMac) {
+      } else if(Os.isMac) {
         installPackage('lua');
         installPackage('luarocks');
       }
