@@ -2,9 +2,9 @@ package travix;
 
 import travix.loggers.*;
 
-// wrap the underlying implemention, to expose only the required methods
+// wrap the underlying implementation, to expose only the required methods
 class Logger {
-  
+
   public static inline function print(s:String)
     LoggerImpl.print(s);
 
@@ -16,7 +16,7 @@ class Logger {
 
 }
 
-private typedef LoggerImpl = 
+private typedef LoggerImpl =
   #if flash
     FlashLogger;
   #elseif (js && !nodejs)
