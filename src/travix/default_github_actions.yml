@@ -24,22 +24,26 @@ jobs:
           - 4.0.5
 
     steps:
+    - name: Show environment variables
+      shell: bash
+      run: env | sort
+
     - name: Git Checkout
       uses: actions/checkout@v2 #https://github.com/actions/checkout
 
-    - name: "Cache: Haxelib Repository"
+    - name: "Cache Haxelib Repository"
       uses: actions/cache@v2
       with:
-        path: ~/haxe/lib
+        path: $$RUNNER_TOOL_CACHE/haxe/$${{ matrix.haxe }}/x64/lib
         key: $${{ runner.os }}-haxelib-$${{ hashFiles('**/haxelib.json') }}
         restore-keys: |
           $${{ runner.os }}-haxelib-
 
     - name: Upgrade brew
-      if: matrix.os == 'macos-latest'
+      if: runner.os == 'macOS'
       run: |
         echo "::group::brew update" && brew update && echo "::endgroup::"
-        echo "::group::brew update" && brew config && echo "::endgroup::"
+        echo "::group::brew config" && brew config && echo "::endgroup::"
 
         # workaround to prevent "/usr/local/... is not inside a keg" during "brew install mono"
         rm /usr/local/bin/2to3
@@ -52,7 +56,7 @@ jobs:
         python-version: 3.8
 
     - name: Configure Python 3
-      if: matrix.os == 'windows-latest'
+      if: runner.os == 'Windows'
       shell: cmd
       run: |
         # workaround for https://github.com/actions/setup-python/issues/123
