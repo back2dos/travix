@@ -41,6 +41,10 @@ jobs:
 
     - name: Upgrade brew
       if: runner.os == 'macOS'
+      env:
+        # https://docs.brew.sh/Manpage#environment
+        HOMEBREW_NO_ANALYTICS: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
       run: |
         echo "::group::brew update" && brew update && echo "::endgroup::"
         echo "::group::brew config" && brew config && echo "::endgroup::"
@@ -58,9 +62,8 @@ jobs:
     - name: Configure Python 3
       if: runner.os == 'Windows'
       shell: cmd
-      run: |
-        # workaround for https://github.com/actions/setup-python/issues/123
-        mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
+      # workaround for https://github.com/actions/setup-python/issues/123
+      run: mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
 
     - name: Install Haxe $${{ matrix.haxe }}
       uses: krdlab/setup-haxe@v1 # https://github.com/krdlab/setup-haxe
