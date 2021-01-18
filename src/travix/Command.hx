@@ -15,7 +15,7 @@ class Command {
 
   public function new() {}
 
-  function enter(what:String, ?def:String)
+  function enter(what:String, ?def:String):String
     switch def {
       case null:
         println('Please specify $what');
@@ -33,7 +33,7 @@ class Command {
         }
     }
 
-  function ask(question:String, yes:Bool) {
+  function ask(question:String, yes:Bool):Bool {
     var defaultAnswer = if (yes) "yes" else "no";
     while (true) {
       print('$question? ($defaultAnswer)');
@@ -48,18 +48,23 @@ class Command {
     return throw 'unreachable';
   }
 
-  function tryToRun(cmd:String, ?args:Array<String>)
+  function tryToRun(cmd:String, ?args:Array<String>):RunResult
     return
       switch cmdResult(cmd, args) {
         case Success({ code: 0, stdout: '', stderr: v } | { code: 0, stdout: v }):
-          Success(v);
+          RunResult.Success(v);
         case Success({ code: code, stderr: msg }):
-          Failure(code, msg);
+          RunResult.Failure(code, msg);
         case Failure(e):
-          Failure(e.code, e.message);
+          RunResult.Failure(e.code, e.message);
     }
 
-  function run(cmd:String, ?args:Array<String>) {
+  /**
+   * Exits this process if command execution failed.
+   *
+   * @return the stdout of the command in case of success.
+   */
+  function run(cmd:String, ?args:Array<String>):String {
     var a = [cmd];
     if (args != null)
       a = a.concat(args);
@@ -78,11 +83,10 @@ class Command {
       }
   }
 
-  function libInstalled(lib:String)
+  function libInstalled(lib:String):Bool
     return tryToRun(force(which('haxelib')), ['path', lib]).match(Success(_));
 
-  function installLib(lib:String, ?version = '') {
-
+  function installLib(lib:String, ?version = ''):Void {
     foldOutput('installLib-$lib', function() {
       if (!libInstalled(lib))
         switch which('lix') {
@@ -103,7 +107,7 @@ class Command {
     });
   }
 
-  function foldOutput<T>(tag:String, func:Void->T) {
+  function foldOutput<T>(tag:String, func:Void->T):T {
     tag = tag.replace('+', 'plus');
     if(Travix.isTravis) Sys.println('travis_fold:start:$tag.${Travix.counter}');
     else if(Travix.isGithubActions) Sys.println('::group::$tag');
@@ -113,7 +117,7 @@ class Command {
     return result;
   }
 
-  function ensureDir(dir:String) {
+  function ensureDir(dir:String):Void {
     var isDir = dir.extension() == '';
 
     if (isDir)
@@ -128,7 +132,7 @@ class Command {
       dir.createDirectory();
   }
 
-  function build(tag, args:Array<String>, run) {
+  function build(tag, args:Array<String>, run):Void {
     args = args.concat(['-lib', 'travix']);
     switch Travix.getInfos() {
       case None: // do nothing
@@ -173,7 +177,10 @@ class Command {
     }
   #end
 
-  function exec(cmd, ?args:Array<String>) {
+  /**
+   * Exits this process if command execution failed.
+   */
+  function exec(cmd, ?args:Array<String>):Void {
     var a = [cmd];
     if (args != null) {
       a = a.concat(args);
@@ -189,7 +196,7 @@ class Command {
     }
   }
 
-  function withCwd<T>(dir:String, f:Void->T) {
+  function withCwd<T>(dir:String, f:Void->T):T {
     var old = getCwd();
     setCwd(dir);
     var ret = f();
@@ -202,7 +209,7 @@ class Command {
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
-  inline function installPackages(packageNames:Array<String>, ?additionalArgs:Array<String>) {
+  inline function installPackages(packageNames:Array<String>, ?additionalArgs:Array<String>):Void {
     for (p in packageNames)
       installPackage(p, additionalArgs);
   }
@@ -212,7 +219,7 @@ class Command {
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
-  function installPackage(packageName:String, ?additionalArgs:Array<String>) {
+  function installPackage(packageName:String, ?additionalArgs:Array<String>):Void {
     foldOutput('installPackage-$packageName', function() {
       switch Sys.systemName() {
         case 'Linux':
