@@ -15,6 +15,33 @@ class Command {
 
   public function new() {}
 
+  function getHaxeVersion():String {
+    var proc = Os.isWindows ?
+      new sys.io.Process('cmd', ["/c", "haxe", "-version"]) :  // workaround for lix where haxe is a batch file
+      new sys.io.Process('haxe', ['-version']);
+
+    var stdout = proc.stdout.readAll().toString().replace('\n', '');
+    var stderr = proc.stderr.readAll().toString().replace('\n', '');
+
+    return switch stdout.split('+')[0].trim() + stderr.split('+')[0].trim() {
+      case '4.0.0 (git build master @ 2344f233a)':      '4.0.0-preview.1';
+      case '4.0.0 (git build development @ a018cbd)':   '4.0.0-preview.2';
+      case '4.0.0 (git build development @ 3018ab109)': '4.0.0-preview.3';
+      case '4.0.0 (git build development @ 1e3e5e016)': '4.0.0-preview.4';
+      case '4.0.0 (git build development @ 7eb789f54)': '4.0.0-preview.5';
+      case '4.0.0 (git build development @ 1fdd3d59b)': '4.0.0-rc.1';
+      case '4.0.0 (git build development @ 77068e10c)': '4.0.0-rc.2';
+      case '4.0.0 (git build development @ e3df7a448)': '4.0.0-rc.3';
+      case '4.0.0 (git build development @ 97f1e1a9d)': '4.0.0-rc.4';
+      case '4.0.0 (git build development @ 4a745347f)': '4.0.0-rc.5';
+      case v: v;
+    }
+  }
+
+  function getHaxeMajorVersion():Int {
+    return Std.parseInt(getHaxeVersion().split(".")[0]);
+  }
+
   function enter(what:String, ?def:String):String
     switch def {
       case null:

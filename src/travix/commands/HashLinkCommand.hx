@@ -79,16 +79,4 @@ class HashLinkCommand extends Command {
       exec(hlCommand, ['bin/hl/tests.hl']);
     });
   }
-
-  function getHaxeVersion() {
-    var proc = new sys.io.Process('haxe', ['-version']);
-    var stdout = proc.stdout.readAll().toString().replace('\n', '');
-    var stderr = proc.stderr.readAll().toString().replace('\n', '');
-
-    return switch stdout.split('+')[0].trim() + stderr.split('+')[0].trim() {
-      case '4.0.0 (git build master @ 2344f23)': '4.0.0-preview.1';
-      case '4.0.0 (git build development @ a018cbd)': '4.0.0-preview.2';
-      case v: v;
-    }
-  }
 }
