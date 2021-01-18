@@ -215,7 +215,8 @@ class Command {
   }
 
   /**
-   * Installs a software package using a os-specific pacakge manager. "apt-get" on Linux and "brew" on MacOs.
+   * Installs a software package using a OS-specific package manager.
+   * "apt-get/yum" on Linux, "brew" on MacOs and "choco" on Windows.
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
@@ -223,17 +224,30 @@ class Command {
     foldOutput('installPackage-$packageName', function() {
       switch Sys.systemName() {
         case 'Linux':
-          if (isFirstPackageInstallation) {
-            exec('sudo', ['apt-get', 'update', '-qq']);
-            isFirstPackageInstallation = false;
+          switch which('apt-get') {
+            case Success(_):
+              if (isFirstPackageInstallation) {
+                exec('sudo', ['apt-get', '-qq', 'update']);
+                isFirstPackageInstallation = false;
+              }
+              exec('sudo', ['apt-get', '-yqq', 'install', '--no-install-recommends', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
+            default:
+              if (isFirstPackageInstallation) {
+                exec('sudo', ['yum', 'checkupdate', '-q']);
+                isFirstPackageInstallation = false;
+              }
+              exec('sudo', ['yum', '-yq', 'install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
           }
-          exec('sudo', ['apt-get', 'install', '--no-install-recommends', '-qq', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
         case 'Mac':
+          // https://brew.sh/
           if (isFirstPackageInstallation) {
             exec('brew', ['update']); // to prevent "Homebrew must be run under Ruby 2.3!" https://github.com/travis-ci/travis-ci/issues/8552#issuecomment-335321197
             isFirstPackageInstallation = false;
           }
           exec('brew', ['install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
+        case 'Windows':
+          // https://chocolatey.org/
+          exec('choco', ['install', '--no-progress', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
         case v:
           println('WARN: Don\'t know how to install packages on $v');
       }
