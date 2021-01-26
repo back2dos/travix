@@ -1,7 +1,7 @@
-# Travix - Travis CI helper for Haxe
+# Travix - Travis CI / GitHub Actions helper for Haxe
 [![Build Status](https://travis-ci.org/back2dos/travix.svg?branch=master)](https://travis-ci.org/back2dos/travix)
 
-Are you tired of setting up Travis CI for all your projects? Then `travix` is for you! \o/
+Are you tired of setting up Travis CI or GitHub Actions for all your projects? Then `travix` is for you! \o/
 
 1. [Quickstart](#quickstart)
 1. [Building](#building)
@@ -19,7 +19,7 @@ To use Travix within one of your libs, `cd` into your project root and execute:
 
 ```bash
 haxelib install travix    # if it's not installed already
-haxelib run travix init   # this will ask you to input the necessary information and create a .travis.yml file
+haxelib run travix init   # this will ask you to input the necessary information and create a .travis.yml or GitHub Actions workflow YAML file
 ```
 
 From there, the setup should be straight forward.
