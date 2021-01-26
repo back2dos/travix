@@ -1,5 +1,5 @@
 # Travix - Travis CI / GitHub Actions helper for Haxe
-[![Build Status](https://travis-ci.org/back2dos/travix.svg?branch=master)](https://travis-ci.org/back2dos/travix)
+[![Build Status](https://travis-ci.org/back2dos/travix.svg?branch=master)](https://travis-ci.org/back2dos/travix) ![Build](https://github.com/back2dos/travix/workflows/Build/badge.svg?branch=master)
 
 Are you tired of setting up Travis CI or GitHub Actions for all your projects? Then `travix` is for you! \o/
 
