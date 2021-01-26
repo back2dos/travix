@@ -9,7 +9,7 @@ class NodeCommand extends Command {
   static var VERSION_RE = ~/(\d*)\.(\d*)\.(\d*)/;
   
   public function install() {
-    if (Travix.isTravis && Travix.isMac) {
+    if (Travix.isTravis && Os.isMac) {
         foldOutput('upgrade-nodejs', function() {
           // homebrew will fail if current version is already latest
           // so we need to check it first

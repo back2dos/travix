@@ -9,7 +9,8 @@
 	"contributors": [
 		"back2dos",
 		"kevinresol",
-		"ciscoheat"
+		"ciscoheat",
+		"sebthom"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"version": "0.14.1",

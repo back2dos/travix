@@ -15,7 +15,34 @@ class Command {
 
   public function new() {}
 
-  function enter(what:String, ?def:String)
+  function getHaxeVersion():String {
+    var proc = Os.isWindows ?
+      new sys.io.Process('cmd', ["/c", "haxe", "-version"]) :  // workaround for lix where haxe is a batch file
+      new sys.io.Process('haxe', ['-version']);
+
+    var stdout = proc.stdout.readAll().toString().replace('\n', '');
+    var stderr = proc.stderr.readAll().toString().replace('\n', '');
+
+    return switch stdout.split('+')[0].trim() + stderr.split('+')[0].trim() {
+      case '4.0.0 (git build master @ 2344f233a)':      '4.0.0-preview.1';
+      case '4.0.0 (git build development @ a018cbd)':   '4.0.0-preview.2';
+      case '4.0.0 (git build development @ 3018ab109)': '4.0.0-preview.3';
+      case '4.0.0 (git build development @ 1e3e5e016)': '4.0.0-preview.4';
+      case '4.0.0 (git build development @ 7eb789f54)': '4.0.0-preview.5';
+      case '4.0.0 (git build development @ 1fdd3d59b)': '4.0.0-rc.1';
+      case '4.0.0 (git build development @ 77068e10c)': '4.0.0-rc.2';
+      case '4.0.0 (git build development @ e3df7a448)': '4.0.0-rc.3';
+      case '4.0.0 (git build development @ 97f1e1a9d)': '4.0.0-rc.4';
+      case '4.0.0 (git build development @ 4a745347f)': '4.0.0-rc.5';
+      case v: v;
+    }
+  }
+
+  function getHaxeMajorVersion():Int {
+    return Std.parseInt(getHaxeVersion().split(".")[0]);
+  }
+
+  function enter(what:String, ?def:String):String
     switch def {
       case null:
         println('Please specify $what');
@@ -33,7 +60,7 @@ class Command {
         }
     }
 
-  function ask(question:String, yes:Bool) {
+  function ask(question:String, yes:Bool):Bool {
     var defaultAnswer = if (yes) "yes" else "no";
     while (true) {
       print('$question? ($defaultAnswer)');
@@ -48,18 +75,23 @@ class Command {
     return throw 'unreachable';
   }
 
-  function tryToRun(cmd:String, ?args:Array<String>)
+  function tryToRun(cmd:String, ?args:Array<String>):RunResult
     return
       switch cmdResult(cmd, args) {
         case Success({ code: 0, stdout: '', stderr: v } | { code: 0, stdout: v }):
-          Success(v);
+          RunResult.Success(v);
         case Success({ code: code, stderr: msg }):
-          Failure(code, msg);
+          RunResult.Failure(code, msg);
         case Failure(e):
-          Failure(e.code, e.message);
+          RunResult.Failure(e.code, e.message);
     }
 
-  function run(cmd:String, ?args:Array<String>) {
+  /**
+   * Exits this process if command execution failed.
+   *
+   * @return the stdout of the command in case of success.
+   */
+  function run(cmd:String, ?args:Array<String>):String {
     var a = [cmd];
     if (args != null)
       a = a.concat(args);
@@ -78,11 +110,10 @@ class Command {
       }
   }
 
-  function libInstalled(lib:String)
+  function libInstalled(lib:String):Bool
     return tryToRun(force(which('haxelib')), ['path', lib]).match(Success(_));
 
-  function installLib(lib:String, ?version = '') {
-
+  function installLib(lib:String, ?version = ''):Void {
     foldOutput('installLib-$lib', function() {
       if (!libInstalled(lib))
         switch which('lix') {
@@ -103,15 +134,17 @@ class Command {
     });
   }
 
-  function foldOutput<T>(tag:String, func:Void->T) {
+  function foldOutput<T>(tag:String, func:Void->T):T {
     tag = tag.replace('+', 'plus');
     if(Travix.isTravis) Sys.println('travis_fold:start:$tag.${Travix.counter}');
+    else if(Travix.isGithubActions) Sys.println('::group::$tag');
     var result = func();
     if(Travix.isTravis) Sys.println('travis_fold:end:$tag.${Travix.counter}');
+    else if(Travix.isGithubActions) Sys.println('::endgroup::');
     return result;
   }
 
-  function ensureDir(dir:String) {
+  function ensureDir(dir:String):Void {
     var isDir = dir.extension() == '';
 
     if (isDir)
@@ -126,7 +159,7 @@ class Command {
       dir.createDirectory();
   }
 
-  function build(tag, args:Array<String>, run) {
+  function build(tag, args:Array<String>, run):Void {
     args = args.concat(['-lib', 'travix']);
     switch Travix.getInfos() {
       case None: // do nothing
@@ -171,7 +204,10 @@ class Command {
     }
   #end
 
-  function exec(cmd, ?args:Array<String>) {
+  /**
+   * Exits this process if command execution failed.
+   */
+  function exec(cmd, ?args:Array<String>):Void {
     var a = [cmd];
     if (args != null) {
       a = a.concat(args);
@@ -187,7 +223,7 @@ class Command {
     }
   }
 
-  function withCwd<T>(dir:String, f:Void->T) {
+  function withCwd<T>(dir:String, f:Void->T):T {
     var old = getCwd();
     setCwd(dir);
     var ret = f();
@@ -200,31 +236,45 @@ class Command {
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
-  inline function installPackages(packageNames:Array<String>, ?additionalArgs:Array<String>) {
+  inline function installPackages(packageNames:Array<String>, ?additionalArgs:Array<String>):Void {
     for (p in packageNames)
       installPackage(p, additionalArgs);
   }
 
   /**
-   * Installs a software package using a os-specific pacakge manager. "apt-get" on Linux and "brew" on MacOs.
+   * Installs a software package using a OS-specific package manager.
+   * "apt-get/yum" on Linux, "brew" on MacOs and "choco" on Windows.
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
-  function installPackage(packageName:String, ?additionalArgs:Array<String>) {
+  function installPackage(packageName:String, ?additionalArgs:Array<String>):Void {
     foldOutput('installPackage-$packageName', function() {
       switch Sys.systemName() {
         case 'Linux':
-          if (isFirstPackageInstallation) {
-            exec('sudo', ['apt-get', 'update', '-qq']);
-            isFirstPackageInstallation = false;
+          switch which('apt-get') {
+            case Success(_):
+              if (isFirstPackageInstallation) {
+                exec('sudo', ['apt-get', '-qq', 'update']);
+                isFirstPackageInstallation = false;
+              }
+              exec('sudo', ['apt-get', '-yqq', 'install', '--no-install-recommends', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
+            default:
+              if (isFirstPackageInstallation) {
+                exec('sudo', ['yum', 'checkupdate', '-q']);
+                isFirstPackageInstallation = false;
+              }
+              exec('sudo', ['yum', '-yq', 'install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
           }
-          exec('sudo', ['apt-get', 'install', '--no-install-recommends', '-qq', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
         case 'Mac':
+          // https://brew.sh/
           if (isFirstPackageInstallation) {
             exec('brew', ['update']); // to prevent "Homebrew must be run under Ruby 2.3!" https://github.com/travis-ci/travis-ci/issues/8552#issuecomment-335321197
             isFirstPackageInstallation = false;
           }
           exec('brew', ['install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
+        case 'Windows':
+          // https://chocolatey.org/
+          exec('choco', ['install', '--no-progress', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
         case v:
           println('WARN: Don\'t know how to install packages on $v');
       }

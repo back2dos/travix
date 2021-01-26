@@ -41,10 +41,10 @@ script:
   - lix run travix neko "${args[@]}"
   - lix run travix lua "${args[@]}"
   - lix run travix java "${args[@]}"
-  # - lix run travix cs "${args[@]}" # https://github.com/back2dos/travix/issues/92
+  - lix run travix cs "${args[@]}"
   - lix run travix cpp "${args[@]}"
-  - lix run travix hl "${args[@]}"
-  - if [ "$TRAVIS_OS_NAME" != "osx" ]; then lix run travix python "${args[@]}"; fi
+  # - lix run travix hl "${args[@]}" # no current HashLink binaries available
+  - lix run travix python "${args[@]}"
 
 jobs:
   include:

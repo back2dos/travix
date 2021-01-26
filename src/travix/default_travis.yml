@@ -9,7 +9,7 @@ os:
 
 # you can specify futher versions as found at http://haxe.org/website-content/downloads/versions.json
 haxe:
-  - "3.4.0"
+  - "4.1.4"
   - development
   
 matrix:
@@ -19,8 +19,8 @@ matrix:
 install:
   - haxelib install travix
   # to always use the latest version of travix comment out the previous line and uncomment the next
-  # - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml && popd
+  # - haxelib git travix https://github.com/back2dos/travix && pushd . && cd $(haxelib config)travix/git && haxe build-neko.hxml -lib hx3compat && popd
   - haxelib run travix install
 
 script:
-${[for (p in platforms) "  - haxelib run travix "+p].join('\n')}
+${[for (p in platforms) "  - haxelib run travix " + p].join('\n')}

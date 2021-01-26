@@ -7,17 +7,17 @@ import Sys.*;
 using StringTools;
 
 class LuaCommand extends Command {
-  
+
   public function install() {
-    if(Travix.isTravis) { // if(command('eval', ['which luarocks >/dev/null']) != 0) {
-      if(Travix.isLinux) {
+    if(Travix.isTravis || Travix.isGithubActions) { // if(command('eval', ['which luarocks >/dev/null']) != 0) {
+      if(Os.isLinux) {
         var lsb = switch tryToRun('lsb_release', ['-s', '-c']) {
           case Success(output): output.trim();
           case Failure(_): null;
         }
-        
+
         Sys.println('lsb: $lsb');
-        
+
         switch lsb {
           case 'precise':
             // Required repo for precise to build cmake
@@ -29,7 +29,7 @@ class LuaCommand extends Command {
             exec('eval', ['sudo add-apt-repository -y ppa:george-edison55/cmake-3.x']);
             exec('eval', ['sudo apt-get update']);
         }
-        
+
         installPackages([
           "cmake",
           "libpcre3",
@@ -63,8 +63,8 @@ class LuaCommand extends Command {
           exec('rm', ['-f', 'luarocks-$luaRocksVersion.tar.gz']);
           exec('rm', ['-rf', 'luarocks-$luaRocksVersion']);
         });
-        
-      } else if(Travix.isMac) {
+
+      } else if(Os.isMac) {
         installPackage('lua');
         installPackage('luarocks');
       }
