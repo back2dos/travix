@@ -5,6 +5,9 @@ on:
   push:
     paths-ignore:
     - '**/*.md'
+    - .travis.yml
+    - provision.sh
+    - Vagrantfile
   pull_request:
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
@@ -60,13 +63,16 @@ jobs:
     - name: Set up Python 3
       uses: actions/setup-python@v2 # https://github.com/actions/setup-python
       with:
-        python-version: 3.8
+        python-version: 3.9
 
-    - name: Configure Python 3
+    - name: Configure Python 3 on Windows
       if: runner.os == 'Windows'
       shell: cmd
       # workaround for https://github.com/actions/setup-python/issues/123
-      run: mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
+      run:
+        if not exist "%pythonLocation%\python.exe" (
+          mklink "%pythonLocation%\python3.exe" "%pythonLocation%\python.exe"
+        )
 
     - name: Setup Node.js
       uses: actions/setup-node@v2

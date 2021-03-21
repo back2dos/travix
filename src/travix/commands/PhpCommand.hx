@@ -74,7 +74,9 @@ class PhpCommand extends Command {
             exec('brew', ['php', 'install', phpPackage + "@" + phpPackageVersion]);
             exec('brew', ['php', 'link', phpPackage + "@" + phpPackageVersion]);
           case 'Windows':
-            installPackage(phpPackage, ['--version', phpPackageVersion, '--allow-downgrade']);
+            // --ignore-package-exit-codes is to prevent
+            // "Packages requiring reboot: - vcredist140 (exit code 3010)" from failing the installation
+            installPackage(phpPackage, ['--version', phpPackageVersion, '--allow-downgrade', '--ignore-package-exit-codes']);
           case v:
             println('[ERROR] Don\'t know how to install PHP on $v');
             exit(1);
