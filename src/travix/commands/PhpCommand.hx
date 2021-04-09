@@ -29,7 +29,14 @@ class PhpCommand extends Command {
     }
 
     isPHPInstallationRequired = switch(tryToRun(phpCmd, ['--version'])) {
-      case Success(out): !new EReg(isPHP7Required ? "PHP 7\\." : "PHP 5\\.", "").match(out);
+      case Success(out):
+        var r = ~/^PHP ([0-9]+\.[0-9]+)/;
+        if (r.match(out)) {
+          var phpVer = Std.parseFloat(r.matched(0));
+          isPHP7Required ? phpVer < 7 : phpVer < 5 || phpVer >= 7;
+        } else {
+          true;
+        }
       case Failure(_):   true;
     }
 
