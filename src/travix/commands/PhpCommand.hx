@@ -33,7 +33,7 @@ class PhpCommand extends Command {
         var r = ~/^PHP ([0-9]+\.[0-9]+)/;
         if (r.match(out)) {
           var phpVer = Std.parseFloat(r.matched(0));
-          isPHP7Required ? phpVer < 7 : phpVer < 5 || phpVer >= 7;
+          isPHP7Required ? phpVer < 7 || phpVer >= 8 : phpVer < 5 || phpVer >= 7;
         } else {
           true;
         }
