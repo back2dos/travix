@@ -232,7 +232,7 @@ class Command {
   }
 
   /**
-   * Installs software packages using a os-specific pacakge manager. "apt-get" on Linux and "brew" on MacOs.
+   * Installs software packages using a os-specific package manager. "apt-get" on Linux and "brew" on MacOs.
    *
    * @param additionalArgs additional flags/options to be passed to the package manager
    */
