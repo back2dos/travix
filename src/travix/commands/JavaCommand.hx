@@ -16,12 +16,15 @@ class JavaCommand extends Command {
     installLib('hxjava');
     
     build('java', ['-java', 'bin/java'].concat(rest), function () {
+      // must be executed while in project root, i.e. outside withCwd('bin/java')
+      var isDebugBuild = isDebugBuild(rest);
+
       withCwd('bin/java', function() {
         if('.buckconfig'.exists()) {
           exec('buck', ['build', ':run']);
           exec('buck', ['run', ':run']);
         } else {
-          var outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
+          var outputFile = main + (isDebugBuild ? '-Debug' : '');
           exec('java', ['-jar', '$outputFile.jar']);
         }
       });
