@@ -16,7 +16,7 @@ class JavaCommand extends Command {
     installLib('hxjava');
     
     build('java', ['-java', 'bin/java'].concat(rest), function () {
-      if('.buckconfig'.exists()) {
+      if('bin/java/.buckconfig'.exists()) {
         withCwd('bin/java', function() {
           exec('buck', ['build', ':run']);
           exec('buck', ['run', ':run']);
