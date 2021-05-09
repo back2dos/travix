@@ -32,7 +32,7 @@ class PhpCommand extends Command {
       case Success(out):
         var r = ~/^PHP ([0-9]+\.[0-9]+)/;
         if (r.match(out)) {
-          var phpVer = Std.parseFloat(r.matched(0));
+          var phpVer = Std.parseFloat(r.matched(1));
           isPHP7Required ? phpVer < 7 || phpVer >= 8 : phpVer < 5 || phpVer >= 7;
         } else {
           true;
@@ -60,8 +60,8 @@ class PhpCommand extends Command {
   }
 
   public function install() {
-    foldOutput("php-install", function() {
-      if (isPHPInstallationRequired) {
+    if (isPHPInstallationRequired) {
+      foldOutput("php-install", function() {
         switch Sys.systemName() {
           case "Linux":
             installPackage('software-properties-common'); // ensure 'add-apt-repository' command is present
@@ -88,8 +88,8 @@ class PhpCommand extends Command {
             println('[ERROR] Don\'t know how to install PHP on $v');
             exit(1);
         }
-      }
-    });
+      });
+    }
 
     foldOutput("php-version", function() {
       // print the effective PHP version
