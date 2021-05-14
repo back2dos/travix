@@ -13,8 +13,8 @@
 		"sebthom"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
-	"version": "0.14.1",
-	"releasenote": "Make travix js work on windows.",
+	"version": "0.15.0",
+	"releasenote": "Support GitHub Actions",
 	"tags": [
 		"ci",
 		"travis",
