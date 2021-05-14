@@ -34,6 +34,7 @@ class ReleaseCommand {
 		var info:HaxelibInfo = INFO.getContent().parse();
 		info.version = version;
 		
+		Sys.println('== Releasing Version $version');
 		
 		if(PRERELEASE.exists()) {
 			Sys.println('== Compiling $PRERELEASE');
