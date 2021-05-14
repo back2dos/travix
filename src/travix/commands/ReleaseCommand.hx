@@ -5,6 +5,7 @@ import haxe.io.*;
 import sys.io.*;
 import tink.cli.*;
 
+using StringTools;
 using haxe.Json;
 using sys.io.File;
 using sys.FileSystem;
@@ -22,12 +23,13 @@ class ReleaseCommand {
   @:defaultCommand
 	public function doIt(args:Rest<String>) {
 		var version = args[0];
-		if(version == null) 
-			switch [Sys.getEnv('TRAVIS'), Sys.getEnv('TRAVIS_TAG')] {
-				case ['true', null | '']: error('Not a tag, skipping...');
-				case ['true', tag]: version = tag;
-				default: error('Please specify version. e.g. "haxelib run travix_release 1.0.0"');
+		if(version == null) {
+			var p = new Process('git', ['describe', '--exact-match', '--tags']);
+			switch p.exitCode() {
+				case 0: version = p.stdout.readAll().toString().trim();
+				case _: error('Please specify version. e.g. "haxelib run travix release 1.0.0"');
 			}
+		}
 		
 		var info:HaxelibInfo = INFO.getContent().parse();
 		info.version = version;
