@@ -26,8 +26,13 @@ class ReleaseCommand {
 		if(version == null) {
 			var p = new Process('git', ['describe', '--exact-match', '--tags']);
 			switch p.exitCode() {
-				case 0: version = p.stdout.readAll().toString().trim();
-				case _: error('Please specify version. e.g. "haxelib run travix release 1.0.0"');
+				case 0:
+					version = p.stdout.readAll().toString().trim();
+				case code:
+					Sys.println('Unable to get git tag (exit code = $code)');
+					Sys.println(p.stdout.readAll().toString());
+					Sys.println(p.stderr.readAll().toString());
+					error('Please specify version. e.g. "haxelib run travix release 1.0.0"');
 			}
 		}
 		
