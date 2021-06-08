@@ -10,7 +10,7 @@
 		"back2dos",
 		"kevinresol",
 		"ciscoheat",
-		"sebthom"
+		"vegardit"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"version": "0.15.0",
