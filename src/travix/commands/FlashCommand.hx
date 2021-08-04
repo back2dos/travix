@@ -46,7 +46,7 @@ class FlashCommand extends Command {
 
         // Required flash libs
         installPackages([
-          "libcurl3",
+          "libcurl3-gnutls",
           "libglib2.0-0",
           "libgtk2.0-0",
           "libnss3",
