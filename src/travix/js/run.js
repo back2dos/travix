@@ -8,9 +8,9 @@ var url = 'http://localhost:8912/run.html';
     headless: true,
     devtools: true,
     args: [
-        '--disable-web-security',
-        '--disable-features=IsolateOrigins',
-        '--disable-site-isolation-trials'
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins',
+      '--disable-site-isolation-trials'
     ]
   });
   const page = await browser.newPage();
