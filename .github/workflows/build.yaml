@@ -64,7 +64,7 @@ jobs:
     - name: Set up Python 3
       uses: actions/setup-python@v3 # https://github.com/actions/setup-python
       with:
-        python-version: 3.9
+        python-version: "3.10"
 
     - name: Configure Python 3 on Windows
       if: runner.os == 'Windows'
