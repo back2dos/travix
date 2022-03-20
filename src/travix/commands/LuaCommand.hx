@@ -40,7 +40,7 @@ class LuaCommand extends Command {
         ]);
 
         foldOutput('luarocks-install', function() {
-          var luaRocksVersion = '2.4.3';
+          var luaRocksVersion = '3.8.0';
 
           // Add source files so luarocks can be compiled
           exec('sudo', ['mkdir', '-p', '/usr/include/lua/5.2']);
