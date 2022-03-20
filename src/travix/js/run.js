@@ -5,7 +5,7 @@ var url = 'http://localhost:8912/run.html';
 (async () => {
   server.listen(8912);
   const browser = await puppeteer.launch({
-	headless: true,
+    headless: true,
     devtools: true,
     args: [
         '--disable-web-security',
