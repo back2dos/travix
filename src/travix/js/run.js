@@ -4,7 +4,15 @@ var url = 'http://localhost:8912/run.html';
 
 (async () => {
   server.listen(8912);
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+    devtools: true,
+    args: [
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins',
+      '--disable-site-isolation-trials'
+    ]
+  });
   const page = await browser.newPage();
   page.on('console', msg => console.log(msg.text()));
   page.on('pageerror', err => console.log(err)); // should not happen because we should have caught all errors with window.onerror
