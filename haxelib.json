@@ -13,7 +13,7 @@
 		"vegardit"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
-	"version": "0.15.2",
+	"version": "0.15.3",
 	"releasenote": "Add missing run script.",
 	"tags": [
 		"ci",
