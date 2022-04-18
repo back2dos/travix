@@ -13,8 +13,8 @@
 		"vegardit"
 	],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
-	"version": "0.15.1",
-	"releasenote": "Various updates.",
+	"version": "0.15.2",
+	"releasenote": "Add missing run script.",
 	"tags": [
 		"ci",
 		"travis",
