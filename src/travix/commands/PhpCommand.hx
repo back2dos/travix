@@ -9,7 +9,7 @@ class PhpCommand extends Command {
   var isPHP7Required:Bool;
   var isPHPInstallationRequired:Bool;
 
-  var phpPackage:String;
+  var phpPackage = "php";
   var phpPackageVersion:String;
   var phpCmd = "php";
 
@@ -43,16 +43,13 @@ class PhpCommand extends Command {
     if(isPHPInstallationRequired) {
       switch Sys.systemName() {
         case 'Linux':
-          phpPackage = "php";
           phpPackageVersion = isPHP7Required ? "7.4" : "5.6";
           phpCmd = "php" + phpPackageVersion;
 
         case 'Mac':
-          phpPackage = isPHP7Required ? "php" : "shivammathur/php/php";
           phpPackageVersion = isPHP7Required ? "7.4" : "5.6";
 
         case 'Windows':
-          phpPackage = "php";
           phpPackageVersion = isPHP7Required ? "7.4.14" : "5.6.40";
           phpCmd = "C:\\tools\\" + (isPHP7Required ? "php74" : "php56") + "\\php.exe";
       }
@@ -73,12 +70,17 @@ class PhpCommand extends Command {
               phpPackage + phpPackageVersion + "-xml"
             ], [ "--allow-unauthenticated" ]);
           case 'Mac':
-            if(!isPHP7Required) {
-              exec('brew', ['tap', 'shivammathur/php']); // https://github.com/shivammathur/homebrew-php
-            }
             exec('brew', ['tap', 'ezzatron/brew-php']); // https://github.com/ezzatron/brew-php
             exec('brew', ['install', 'brew-php']);
-            exec('brew', ['php', 'install', phpPackage + "@" + phpPackageVersion]);
+
+            // PHP 7 and older are unavailable in brew, so we have to install them differently
+            if (Std.parseInt(phpPackageVersion.split("\\.")[0]) < 8) {
+              exec('brew', ['tap', 'shivammathur/php']); // https://github.com/shivammathur/homebrew-php
+              exec('brew', ['php', 'install', 'shivammathur/php/' + phpPackage + "@" + phpPackageVersion]);
+            } else {
+              exec('brew', ['php', 'install', phpPackage + "@" + phpPackageVersion]);
+            }
+
             exec('brew', ['php', 'link', phpPackage + "@" + phpPackageVersion]);
           case 'Windows':
             // --ignore-package-exit-codes is to prevent
@@ -99,7 +101,7 @@ class PhpCommand extends Command {
 
   public function buildAndRun(rest:Rest<String>) {
     build(
-      isPHP7Target ? 'php7' : 'php',
+      'php' + phpPackageVersion,
       (isPHP7Target ? ['-php', 'bin/php', '-D', 'php7'] : ['-php', 'bin/php']).concat(rest),
       function() {
         exec(phpCmd, ['-d', 'xdebug.max_nesting_level=9999', 'bin/php/index.php']);
