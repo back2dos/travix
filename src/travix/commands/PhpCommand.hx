@@ -73,7 +73,7 @@ class PhpCommand extends Command {
               phpPackage + phpPackageVersion + "-xml"
             ], [ "--allow-unauthenticated" ]);
           case 'Mac':
-            if(!isPHP7Required) {
+            if(Std.parseInt(phpPackageVersion.split("\\.")[0]) < 8) { // PHP 7 and older are deprecated in brew
               exec('brew', ['tap', 'shivammathur/php']); // https://github.com/shivammathur/homebrew-php
             }
             exec('brew', ['tap', 'ezzatron/brew-php']); // https://github.com/ezzatron/brew-php

@@ -58,7 +58,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-haxe-${{ matrix.haxe }}-
 
-    - name: Upgrade brew
+    - name: Update brew formulas
       if: runner.os == 'macOS'
       run: |
         echo "::group::brew update" && brew update && echo "::endgroup::"
