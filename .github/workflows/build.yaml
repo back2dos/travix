@@ -3,8 +3,13 @@ name: Build
 
 on:
   push:
+    branches:
+    - '**'
+    tags-ignore:
+    - '**'
     paths-ignore:
     - '**/*.md'
+    - '.github/*.yml'
     - .travis.yml
     - provision.sh
     - Vagrantfile
