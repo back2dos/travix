@@ -1,5 +1,7 @@
 # Travix - Travis CI / GitHub Actions helper for Haxe
-[![Build Status](https://travis-ci.org/back2dos/travix.svg?branch=master)](https://travis-ci.org/back2dos/travix) [![Build](https://github.com/back2dos/travix/actions/workflows/build.yaml/badge.svg)](https://github.com/back2dos/travix/actions/workflows/build.yaml)
+[![Build](https://github.com/back2dos/travix/actions/workflows/build.yaml/badge.svg)](https://github.com/back2dos/travix/actions/workflows/build.yaml)
+[![Release](https://img.shields.io/github/tag/back2dos/travix.svg?label=release)](http://lib.haxe.org/p/haxe-strings)
+[![License](https://img.shields.io/github/license/back2dos/travix.svg?label=license)](#license)
 
 Are you tired of setting up Travis CI or GitHub Actions for all your projects? Then `travix` is for you! \o/
 
@@ -84,7 +86,7 @@ The BDD library [Buddy](https://github.com/ciscoheat/buddy) has built-in support
 ## Reasons to use Travix
 
 Apart from helping the pathologically lazy to set up a CI, the strength of Travix lies in that it deals with dependencies rather gracefully:
-  
+
 1. it relies on the [`haxelib.json`](http://lib.haxe.org/documentation/creating-a-haxelib-package/) to install haxelib dependencies. It also uses the `haxelib dev` command to "mount" your library as a haxelib, giving you all the extra features, e.g. the presense of your `-D libname` flag and the inclusion of `extraParams.hxml` in the build. This happens with the `install` command.
 2. it follows a fail-fast philosophy. What's that supposed to mean? Normally, in your CI, you will install all dependencies before running any of the tests. If you wait for the installation of hxjava, hxcpp, hxcs, mono and php, only to make your first test abort because of a missing semi-colon or a similarly silly mistake, it can be rather frustrating. To avoid that problem, Travix diverges from the usual modus operandi of having distinct installation and execution phases, and instead installs such dependencies right before execution, e.g. in the `cs` command.
 
