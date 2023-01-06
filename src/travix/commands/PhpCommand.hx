@@ -50,7 +50,7 @@ class PhpCommand extends Command {
           phpPackageVersion = isPHP7Required ? "7.4" : "5.6";
 
         case 'Windows':
-          phpPackageVersion = isPHP7Required ? "7.4.14" : "5.6.40";
+          phpPackageVersion = isPHP7Required ? "7.4.33" : "5.6.40";
           phpCmd = "C:\\tools\\" + (isPHP7Required ? "php74" : "php56") + "\\php.exe";
       }
     }
