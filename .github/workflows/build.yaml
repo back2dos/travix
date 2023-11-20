@@ -35,6 +35,7 @@ jobs:
           - macos-latest
           - windows-latest
         haxe:
+          - 4.3.3
           - 4.2.5
           - 4.1.5
           - 4.0.5
