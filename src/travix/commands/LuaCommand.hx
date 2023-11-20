@@ -71,7 +71,7 @@ class LuaCommand extends Command {
     }
 
     // Install lua libraries
-    exec('sudo', 'luarocks install haxe-deps'.split(' '));
+    exec('sudo', 'luarocks install pcre2 haxe-deps'.split(' '));
     exec('eval', ['sudo luarocks install environ 0.1.0-1']); // for haxe 3
 
     // print the effective versions
