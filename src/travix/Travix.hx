@@ -13,6 +13,7 @@ using StringTools;
 using haxe.io.Path;
 using sys.FileSystem;
 using sys.io.File;
+using Lambda;
 
 #if macro
 import haxe.macro.MacroStringTools;
@@ -54,23 +55,27 @@ class Travix {
    */
   public static function getMainClassFQName():String {
 
+    var mainArgs = [ "-m", "--main", "-main" ];
+
     function read(file:String) {
-      for (line in file.getContent().split('\n').map(function (s:String) return s.split('#')[0].trim()))
-        if (line.startsWith('-main'))
-          return Some(line.substr(5).trim());
+      for (line in file.getContent().split('\n').map(function (s:String) return s.split('#')[0].trim())) {
+        var a = mainArgs.find(a -> line.startsWith(a));
+        if (a != null)
+          return Some(line.substr(a.length).trim());
         else
           if (line.endsWith('.hxml'))
             switch read(line) {
               case None:
               case v: return v;
             }
+      }
 
       return None;
     }
 
     var args = Sys.args();
     for(i in 0...args.length) {
-      if(args[i] == '-main') return args[i + 1];
+      if(mainArgs.contains(args[i])) return args[i + 1];
       else if(args[i].endsWith('.hxml')) switch read(args[i]) {
         case None: // do nothing
         case Some(v): return v;
@@ -82,7 +87,7 @@ class Travix {
       case Some(v): return v;
     }
 
-    return die('no -main class found');
+    return die('no -main/--main/-m class found');
   }
 
   /**
