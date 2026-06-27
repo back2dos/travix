@@ -110,10 +110,14 @@ jobs:
     - name: Register travix dev lib
       run: haxelib dev travix .
 
+    - name: Configure haxelib paths
+      shell: bash
+      run: echo "HAXELIB_PATH=${HOME}/haxe/haxe_libraries:$(haxelib config)" >> $GITHUB_ENV
+
     - name: Build Travix
       shell: bash
       run: |
-        lix run haxe build-neko.hxml -lib hx3compat
+        haxe build-neko.hxml -lib hx3compat
         echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
 
     - name: Test Travix with [cs]
