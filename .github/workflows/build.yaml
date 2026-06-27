@@ -112,7 +112,12 @@ jobs:
 
     - name: Configure haxelib paths
       shell: bash
-      run: echo "HAXELIB_PATH=${HOME}/haxe/haxe_libraries:$(haxelib config)" >> $GITHUB_ENV
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          echo "HAXELIB_PATH=$(cygpath -m "${HOME}/haxe/haxe_libraries");$(haxelib config | tr -d '\r')" >> $GITHUB_ENV
+        else
+          echo "HAXELIB_PATH=${HOME}/haxe/haxe_libraries:$(haxelib config)" >> $GITHUB_ENV
+        fi
 
     - name: Build Travix
       shell: bash
