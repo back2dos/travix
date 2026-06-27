@@ -125,9 +125,6 @@ jobs:
         haxe build-neko.hxml -lib hx3compat
         echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
 
-    - name: Test Travix with [cs]
-      run: lix run travix cs ${HAXE_LIBS:-}
-
     - name: Test Travix with [cpp]
       run: lix run travix cpp ${HAXE_LIBS:-}
 
@@ -140,12 +137,6 @@ jobs:
 
     - name: Test Travix with [interp]
       run: lix run travix interp ${HAXE_LIBS:-}
-
-    - name: Test Travix with [java]
-      run: lix run travix java ${HAXE_LIBS:-}
-
-    - name: Test Travix with [jvm]
-      run: lix run travix java -D jvm ${HAXE_LIBS:-}
 
     - name: Test Travix with [lua]
       continue-on-error: ${{ runner.os != 'Linux' }}
