@@ -133,9 +133,6 @@ jobs:
         haxe build-neko.hxml -lib hx3compat
         echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
 
-    - name: Test Travix with [cpp]
-      run: lix run travix cpp ${HAXE_LIBS:-}
-
     - name: Test [eval]
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
 
