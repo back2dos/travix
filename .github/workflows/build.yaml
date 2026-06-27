@@ -113,8 +113,8 @@ jobs:
     - name: Build Travix
       shell: bash
       run: |
-        haxe build-neko.hxml --lib hx3compat
-        echo "HAXE_LIBS=--lib hx3compat" >> $GITHUB_ENV
+        lix run haxe build-neko.hxml -lib hx3compat
+        echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
 
     - name: Test Travix with [cs]
       run: lix run travix cs ${HAXE_LIBS:-}
