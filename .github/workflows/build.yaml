@@ -64,16 +64,23 @@ jobs:
         echo "::group::brew list" && brew list --version && echo "::endgroup::"
 
         # workaround to prevent "Error: The `brew link` step did not complete successfully" during "brew install mono"
+        set +e
         rm -f \
           /usr/local/share/man/man1/* \
           /usr/local/share/man/man5/* \
           /usr/local/bin/idle3 \
           /usr/local/bin/2to3 \
-          /usr/local/bin/2to3 \
-          /usr/local/bin/idle3 \
           /usr/local/bin/pydoc3 \
           /usr/local/bin/python3 \
-          /usr/local/bin/python3-config
+          /usr/local/bin/python3-config \
+          /opt/homebrew/share/man/man1/* \
+          /opt/homebrew/share/man/man5/* \
+          /opt/homebrew/bin/idle3 \
+          /opt/homebrew/bin/2to3 \
+          /opt/homebrew/bin/pydoc3 \
+          /opt/homebrew/bin/python3 \
+          /opt/homebrew/bin/python3-config
+        set -e
 
     - name: Set up Python 3
       uses: actions/setup-python@v5
@@ -99,6 +106,9 @@ jobs:
 
     - name: Install haxe libs
       run: lix download
+
+    - name: Register travix dev lib
+      run: haxelib dev travix .
 
     - name: Build Travix
       shell: bash
