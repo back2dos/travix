@@ -3,6 +3,11 @@ package travix.commands;
 import tink.cli.Rest;
 import Sys.*;
 
+using StringTools;
+using haxe.io.Path;
+using sys.FileSystem;
+using sys.io.File;
+
 class PhpCommand extends Command {
 
   var isPHP7Target:Bool;
@@ -86,6 +91,7 @@ class PhpCommand extends Command {
             // --ignore-package-exit-codes is to prevent
             // "Packages requiring reboot: - vcredist140 (exit code 3010)" from failing the installation
             installPackage(phpPackage, ['--version', phpPackageVersion, '--allow-downgrade', '--ignore-package-exit-codes']);
+            enableWindowsPhpExtensions(['mbstring', 'xml']);
           case v:
             println('[ERROR] Don\'t know how to install PHP on $v');
             exit(1);
@@ -120,5 +126,30 @@ class PhpCommand extends Command {
         case 'Mac':   exec('brew', ['remove', phpPackage + "@" + phpPackageVersion]);
       }
     });
+  }
+
+  function enableWindowsPhpExtensions(extensions:Array<String>) {
+    var iniPath = Path.join([Path.directory(phpCmd), 'php.ini']);
+    if (!FileSystem.exists(iniPath)) {
+      println('WARN: php.ini not found at $iniPath');
+      return;
+    }
+
+    var ini = File.getContent(iniPath);
+    for (ext in extensions)
+      ini = enablePhpIniExtension(ini, ext);
+    File.saveContent(iniPath, ini);
+  }
+
+  function enablePhpIniExtension(ini:String, ext:String):String {
+    for (commented in [';extension=$ext', ';extension=php_$ext.dll']) {
+      if (ini.indexOf(commented) >= 0)
+        return ini.split(commented).join(commented.substr(1));
+    }
+
+    if (new EReg('^\\s*extension\\s*=\\s*($ext|php_$ext\\.dll)\\s*$', 'im').match(ini))
+      return ini;
+
+    return ini + '\nextension=$ext\n';
   }
 }
