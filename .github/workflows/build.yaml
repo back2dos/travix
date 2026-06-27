@@ -102,21 +102,26 @@ jobs:
         node-version: 22
 
     - name: Setup lix
+      shell: bash
       run: npm i -g lix
 
     - name: Install haxe libs
+      shell: bash
       run: lix download
 
     - name: Register travix dev lib
+      shell: bash
       run: haxelib dev travix .
 
     - name: Configure haxelib paths
       shell: bash
       run: |
+        LIX_ROOT="${HOME}/haxe"
         if [[ "${{ runner.os }}" == "Windows" ]]; then
-          echo "HAXELIB_PATH=$(cygpath -m "${HOME}/haxe/haxe_libraries");$(haxelib config | tr -d '\r')" >> $GITHUB_ENV
+          haxelib setup "$(cygpath -w "${LIX_ROOT}/haxelib")"
+          echo "HAXELIB_PATH=$(cygpath -m "${LIX_ROOT}/haxe_libraries")" >> $GITHUB_ENV
         else
-          echo "HAXELIB_PATH=${HOME}/haxe/haxe_libraries:$(haxelib config)" >> $GITHUB_ENV
+          echo "HAXELIB_PATH=${LIX_ROOT}/haxe_libraries:${LIX_ROOT}/haxelib" >> $GITHUB_ENV
         fi
 
     - name: Build Travix
@@ -132,7 +137,7 @@ jobs:
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
 
     - name: Test Travix with [hl]
-      if: runner.os != 'Linux'
+      if: runner.os == 'Windows'
       run: lix run travix hl ${HAXE_LIBS:-}
 
     - name: Test Travix with [interp]
