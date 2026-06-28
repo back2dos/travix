@@ -149,11 +149,14 @@ jobs:
     - name: Test Travix with [node]
       run: lix run travix node ${HAXE_LIBS:-}
 
-    - name: Test Travix with [js]
-      run: lix run travix js ${HAXE_LIBS:-}
-
     - name: Test Travix with [php]
       run: lix run travix php ${HAXE_LIBS:-}
 
     - name: Test Travix with [python]
       run: lix run travix python ${HAXE_LIBS:-}
+
+    - name: Test Travix with [jvm]
+      run: lix run travix jvm ${HAXE_LIBS:-}
+
+    - name: Test Travix with [js]
+      run: lix run travix js ${HAXE_LIBS:-}
