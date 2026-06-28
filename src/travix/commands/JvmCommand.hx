@@ -12,7 +12,7 @@ class JvmCommand extends Command {
 
 		installLib('hxjava');
 
-		build('jvm', ['-jvm', 'bin/jvm'].concat(rest), function() {
+		build('jvm', ['--jvm', 'bin/jvm'].concat(rest), function() {
 			var outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
 			exec('java', ['-jar', 'bin/java/$outputFile.jar']);
 		});
