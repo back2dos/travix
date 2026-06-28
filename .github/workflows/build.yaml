@@ -35,17 +35,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            haxe: "4.2.5"
-          - os: ubuntu-latest
-            haxe: "4.3.7"
-          - os: windows-latest
-            haxe: "4.2.5"
-          - os: windows-latest
-            haxe: "4.3.7"
-          - os: macos-latest
-            haxe: "4.3.7"
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        haxe:
+          - 4.2.5
+          - 4.3.7
 
     steps:
     - name: Git Checkout
@@ -152,6 +148,9 @@ jobs:
 
     - name: Test Travix with [node]
       run: lix run travix node ${HAXE_LIBS:-}
+
+    - name: Test Travix with [js]
+      run: lix run travix js ${HAXE_LIBS:-}
 
     - name: Test Travix with [php]
       run: lix run travix php ${HAXE_LIBS:-}
