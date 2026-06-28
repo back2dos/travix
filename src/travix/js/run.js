@@ -8,6 +8,8 @@ var url = 'http://localhost:8912/run.html';
     headless: true,
     devtools: true,
     args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
       '--disable-web-security',
       '--disable-features=IsolateOrigins',
       '--disable-site-isolation-trials'
