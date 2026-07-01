@@ -236,7 +236,9 @@ class Travix {
    */
   @:command
   public function jvm(rest:Rest<String>) {
-    java(['-D','jvm'].concat(rest));
+    var command = new JvmCommand();
+    command.install();
+    command.buildAndRun(rest);
   }
 
   /**

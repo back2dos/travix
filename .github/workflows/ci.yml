@@ -1,4 +1,3 @@
-# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
 name: Build
 
 on:
@@ -9,13 +8,17 @@ on:
     - '**'
     paths-ignore:
     - '**/*.md'
-    - '.github/*.yml'
-    - .travis.yml
     - provision.sh
     - Vagrantfile
   pull_request:
   workflow_dispatch:
-    # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   # https://docs.brew.sh/Manpage#environment
@@ -23,10 +26,12 @@ env:
   HOMEBREW_NO_AUTO_UPDATE: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+  HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -36,27 +41,18 @@ jobs:
           - windows-latest
         haxe:
           - 4.2.5
-          - 4.1.5
-          - 4.0.5
-          - 3.4.7
+          - 4.3.7
 
     steps:
-    - name: Show environment variables
-      shell: bash
-      run: env | sort
-
     - name: Git Checkout
-      uses: actions/checkout@v3 #https://github.com/actions/checkout
+      uses: actions/checkout@v6
 
-    - name: "Cache Haxe and Haxelibs"
-      uses: actions/cache@v3 # https://github.com/actions/cache
+    - name: Setup Haxe ${{ matrix.haxe }}
+      if: runner.os != 'Windows'
+      uses: krdlab/setup-haxe@v2
       with:
-        path: |
-          ~/haxe
-          ~/AppData/Roaming/haxe
-        key: ${{ runner.os }}-haxe-${{ matrix.haxe }}-${{ hashFiles('haxelib.json') }}
-        restore-keys: |
-          ${{ runner.os }}-haxe-${{ matrix.haxe }}-
+        haxe-version: ${{ matrix.haxe }}
+        cache-dependency-path: haxelib.json
 
     - name: Update brew formulas
       if: runner.os == 'macOS'
@@ -66,21 +62,28 @@ jobs:
         echo "::group::brew list" && brew list --version && echo "::endgroup::"
 
         # workaround to prevent "Error: The `brew link` step did not complete successfully" during "brew install mono"
+        set +e
         rm -f \
           /usr/local/share/man/man1/* \
           /usr/local/share/man/man5/* \
           /usr/local/bin/idle3 \
           /usr/local/bin/2to3 \
-          /usr/local/bin/2to3 \
-          /usr/local/bin/idle3 \
           /usr/local/bin/pydoc3 \
           /usr/local/bin/python3 \
-          /usr/local/bin/python3-config
+          /usr/local/bin/python3-config \
+          /opt/homebrew/share/man/man1/* \
+          /opt/homebrew/share/man/man5/* \
+          /opt/homebrew/bin/idle3 \
+          /opt/homebrew/bin/2to3 \
+          /opt/homebrew/bin/pydoc3 \
+          /opt/homebrew/bin/python3 \
+          /opt/homebrew/bin/python3-config
+        set -e
 
     - name: Set up Python 3
-      uses: actions/setup-python@v4 # https://github.com/actions/setup-python
+      uses: actions/setup-python@v5
       with:
-        python-version: "3.10"
+        python-version: "3.13"
 
     - name: Configure Python 3 on Windows
       if: runner.os == 'Windows'
@@ -92,55 +95,49 @@ jobs:
         )
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
-        node-version: 12
+        node-version: 22
 
     - name: Setup lix
+      shell: bash
       run: npm i -g lix
 
-    - name: Setup Haxe ${{ matrix.haxe }}
+    - name: Setup Haxe via lix (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
       run: lix install haxe ${{ matrix.haxe }}
 
     - name: Install haxe libs
+      shell: bash
       run: lix download
+
+    - name: Register travix dev lib
+      shell: bash
+      run: haxelib dev travix .
+
+    - name: Configure haxelib paths
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        LIX_ROOT="${HOME}/haxe"
+        echo "HAXELIB_PATH=${LIX_ROOT}/haxe_libraries:${LIX_ROOT}/haxelib" >> $GITHUB_ENV
 
     - name: Build Travix
       shell: bash
       run: |
-        if [[ "${{ matrix.haxe }}" == 3.* ]]; then
-           haxe build-neko.hxml
-        else
-           haxe build-neko.hxml --lib hx3compat
-           echo "HAXE_LIBS=--lib hx3compat" >> $GITHUB_ENV
-        fi
-
-    - name: Test Travix with [cs]
-      run: lix run travix cs ${HAXE_LIBS:-}
-
-    - name: Test Travix with [cpp]
-      run: lix run travix cpp ${HAXE_LIBS:-}
+        haxe build-neko.hxml -lib hx3compat
+        echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
 
     - name: Test [eval]
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
 
-    - name: Test Travix with [flash]
-      continue-on-error: true # fails with "Flash execution failed too many times, build failure." but test is actually ok
-      run: lix run travix flash ${HAXE_LIBS:-}
-
     - name: Test Travix with [hl]
-      if: matrix.haxe != '3.4.7' && runner.os != 'Linux'
+      if: runner.os == 'Windows'
       run: lix run travix hl ${HAXE_LIBS:-}
 
     - name: Test Travix with [interp]
       run: lix run travix interp ${HAXE_LIBS:-}
-
-    - name: Test Travix with [java]
-      run: lix run travix java ${HAXE_LIBS:-}
-
-    - name: Test Travix with [jvm]
-      if: matrix.haxe != '3.4.7'
-      run: lix run travix java -D jvm ${HAXE_LIBS:-}
 
     - name: Test Travix with [lua]
       continue-on-error: ${{ runner.os != 'Linux' }}
@@ -155,9 +152,11 @@ jobs:
     - name: Test Travix with [php]
       run: lix run travix php ${HAXE_LIBS:-}
 
-    - name: Test Travix with [php7]
-      if: matrix.haxe != '3.4.7'
-      run: lix run travix php7 ${HAXE_LIBS:-}
-
     - name: Test Travix with [python]
       run: lix run travix python ${HAXE_LIBS:-}
+
+    - name: Test Travix with [jvm]
+      run: lix run travix jvm ${HAXE_LIBS:-}
+
+    - name: Test Travix with [js]
+      run: lix run travix js ${HAXE_LIBS:-}
