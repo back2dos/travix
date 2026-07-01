@@ -6,20 +6,11 @@
 		"tink_cli": ""
 	},
 	"url": "http://github.com/back2dos/travix/",
-	"contributors": [
-		"back2dos",
-		"kevinresol",
-		"ciscoheat",
-		"vegardit"
-	],
+	"contributors": ["back2dos", "kevinresol", "ciscoheat", "vegardit"],
 	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"version": "0.15.3",
 	"releasenote": "Add missing run script.",
-	"tags": [
-		"ci",
-		"travis",
-		"build",
-		"tool"
-	],
+	"main": "Run",
+	"tags": ["ci", "travis", "build", "tool"],
 	"license": "MIT"
 }

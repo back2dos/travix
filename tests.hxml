@@ -1,3 +1,5 @@
 -lib tink_unittest
 -cp tests
 -main Run
+
+--define no-deprecation-warnings
