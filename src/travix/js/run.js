@@ -3,8 +3,6 @@ const handler = require("serve-handler");
 const http = require("http");
 const url = "http://localhost:8912/run.html";
 
-console.log("serve");
-
 const server = http.createServer((request, response) => {
 	return handler(request, response, { public: __dirname });
 });
