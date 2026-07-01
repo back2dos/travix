@@ -8,13 +8,11 @@ class JvmCommand extends Command {
 	public function install() {}
 
 	public function buildAndRun(rest:Rest<String>) {
-		var main = Travix.getMainClassLocalName();
+		final main = Travix.getMainClassLocalName();
 
 		installLib('hxjava');
 
-		build('jvm', ['--jvm', 'bin/jvm'].concat(rest), function() {
-			var outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
-			exec('java', ['-jar', 'bin/jvm/$outputFile.jar']);
-		});
+		final outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
+		build('jvm', ['--jvm', 'bin/jvm/$outputFile.jar'].concat(rest), () -> exec('java', ['-jar', 'bin/jvm/$outputFile.jar']));
 	}
 }
