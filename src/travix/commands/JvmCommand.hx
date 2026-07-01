@@ -14,7 +14,7 @@ class JvmCommand extends Command {
 
 		build('jvm', ['--jvm', 'bin/jvm'].concat(rest), function() {
 			var outputFile = main + (isDebugBuild(rest) ? '-Debug' : '');
-			exec('java', ['-jar', 'bin/java/$outputFile.jar']);
+			exec('java', ['-jar', 'bin/jvm/$outputFile.jar']);
 		});
 	}
 }
