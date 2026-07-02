@@ -42,6 +42,7 @@ jobs:
         haxe:
           - 4.2.5
           - 4.3.7
+          - 5.0.0-preview.1
 
     steps:
     - name: Git Checkout
