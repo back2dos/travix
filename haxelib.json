@@ -7,7 +7,6 @@
 	},
 	"url": "http://github.com/back2dos/travix/",
 	"contributors": ["back2dos", "kevinresol", "ciscoheat", "vegardit"],
-	"postDownload": "haxe -cp src --run travix.PostDownload",
 	"version": "0.15.3",
 	"releasenote": "Add missing run script.",
 	"main": "Run",

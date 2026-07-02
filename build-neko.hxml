@@ -1,6 +1,0 @@
--lib travix 
--main travix.Travix 
--neko run.n
-
--lib tink_cli
---no-traces
