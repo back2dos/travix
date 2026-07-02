@@ -1,0 +1,7 @@
+-lib travix
+-lib hxnodejs
+-main travix.Travix
+-js bin/run.js
+
+-lib tink_cli
+--no-traces

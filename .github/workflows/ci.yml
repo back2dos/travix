@@ -123,6 +123,12 @@ jobs:
         LIX_ROOT="${HOME}/haxe"
         echo "HAXELIB_PATH=${LIX_ROOT}/haxe_libraries:${LIX_ROOT}/haxelib" >> $GITHUB_ENV
 
+    - name: Build Travix
+      shell: bash
+      run: |
+        haxe build-neko.hxml -lib hx3compat
+        echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
+
     - name: Test [eval]
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
 

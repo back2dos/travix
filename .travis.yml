@@ -1,0 +1,63 @@
+sudo: required
+dist: xenial
+
+stages:
+  - test
+  - deploy
+
+language: node_js
+node_js: 8
+
+cache:
+  directories:
+    - $HOME/haxe
+
+os:
+  - linux
+  # - osx
+
+env:
+  - HAXE_VERSION=3.4.7
+  - HAXE_VERSION=latest
+  
+before_install:
+  - args=()
+  - if [ "$HAXE_VERSION" == "latest" ]; then args+=(-lib); args+=(hx3compat); fi
+  
+install:
+  - npm i -g lix
+  - lix install haxe $HAXE_VERSION
+  - lix download
+  - haxe build-neko.hxml "${args[@]}"
+
+  
+script:
+  - lix run travix interp "${args[@]}"
+  - lix run travix js "${args[@]}"
+  - lix run travix flash "${args[@]}"
+  - lix run travix php "${args[@]}"
+  - lix run travix php7 "${args[@]}"
+  - lix run travix node "${args[@]}"
+  - lix run travix neko "${args[@]}"
+  - lix run travix lua "${args[@]}"
+  - lix run travix java "${args[@]}"
+  - lix run travix cs "${args[@]}"
+  - lix run travix cpp "${args[@]}"
+  # - lix run travix hl "${args[@]}" # no current HashLink binaries available
+  - lix run travix python "${args[@]}"
+
+jobs:
+  include:
+    # - stage: test # should uncomment this when there is no matrix above (e.g. only one os, one env, etc)
+    - stage: deploy
+      os: linux
+      install:
+        - npm i -g lix
+        - lix download
+        - haxe build-neko.hxml
+      script: skip
+      env:
+        secure: XFDeQEXNPLPLHDZ2I4k++WsIm2EBffO4pJLYP5+tTS57awlzuBkyK1P4/pzmbcnBMFIrE7ebWQd4NGYIHbb2UuIg8OLwxTpkqb+wMnlzQEN2Rntc+09iT4/bS0TmPLNfMzeDYTgYD4W91HRUGXiCO1+n5VicosCbeoDKKNykVuqqoG3l7U1gxTxJb4NWXWOqFwcRG0jm5CfRs9l2pZ3PLjKNloeFo2fnRmrhDC+A+YCrmUj9MFquH8bhbMNNsoE4sJL2cDNOMINAIjhCcGsfAoCZQNf+ezdvGqYezMq8FBI1hPwbslq/tojLQwYgsqKuEP06VqY5LBESpRS62qQ5g1/Jn18TMDb/nEaEnWBndQFKaq4XIFCk/pRWnMxobsd8nYY0Oep8D8/JavJansh/3jnNKwo96lI40nvwS2AMY4AFTvFXyS/Or/WZKRWO9QI3dy3oULMllseiUkpx5vyqTrVreNCOe1suIw3vVk1hGdITEk6U+C/5Y7QpsulBySKd+Q6XoH8m6fSbgWhGdqhi8w4lE6E25XWl2Cbdi/SNbcGJZpgeM9udeQZGhlifhgimSYqRkRdhobCrhXdVygrTniK5OlydJQJWxP1AEJmFZsNzbEyry8xWV2t2B2PZ8fbqXBcbX1PtliT9AHq3fsd8zRNjmRslkYveopRyLUg8E5c=
+      after_success:
+        - lix run travix install
+        - lix run travix release
