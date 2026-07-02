@@ -10,7 +10,7 @@ class PythonCommand extends Command {
       // fix for https://github.com/back2dos/travix/issues/83
       if (Sys.systemName() == 'Mac' && tryToRun('python', ['--version']).match(Success(_))) {
         // https://stackoverflow.com/questions/49672642/trying-to-install-python3-using-brew
-        exec('brew', ['upgrade', "python"]);
+        brewExec(['upgrade', "python"]);
       } else {
         installPackage('python3');
       }

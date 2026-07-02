@@ -13,13 +13,13 @@ class NodeCommand extends Command {
         foldOutput('upgrade-nodejs', function() {
           // homebrew will fail if current version is already latest
           // so we need to check it first
-          switch [tryToRun('node', ['-v']), tryToRun('brew', ['info', 'node'])] {
+          switch [tryToRun('node', ['-v']), tryBrewRun(['info', 'node'])] {
             case [Success(current), Success(available)]:
               var current = VERSION_RE.match(current) ? Std.parseInt(VERSION_RE.matched(1)) : 0;
               var available = VERSION_RE.match(available) ? Std.parseInt(VERSION_RE.matched(1)) : 0;
-              if(current < available) exec('brew', ['upgrade', 'node']);
+              if(current < available) brewExec(['upgrade', 'node']);
             default:
-                exec('brew', ['upgrade', 'node']);
+                brewExec(['upgrade', 'node']);
           }
         });
     }

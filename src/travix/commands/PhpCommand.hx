@@ -75,18 +75,18 @@ class PhpCommand extends Command {
               phpPackage + phpPackageVersion + "-xml"
             ], [ "--allow-unauthenticated" ]);
           case 'Mac':
-            exec('brew', ['tap', 'ezzatron/brew-php']); // https://github.com/ezzatron/brew-php
-            exec('brew', ['install', 'brew-php']);
+            brewExec(['tap', 'ezzatron/brew-php']); // https://github.com/ezzatron/brew-php
+            brewExec(['install', 'brew-php']);
 
             // PHP 7 and older are unavailable in brew, so we have to install them differently
             if (Std.parseInt(phpPackageVersion.split("\\.")[0]) < 8) {
-              exec('brew', ['tap', 'shivammathur/php']); // https://github.com/shivammathur/homebrew-php
-              exec('brew', ['php', 'install', 'shivammathur/php/' + phpPackage + "@" + phpPackageVersion]);
+              brewExec(['tap', 'shivammathur/php']); // https://github.com/shivammathur/homebrew-php
+              brewExec(['php', 'install', 'shivammathur/php/' + phpPackage + "@" + phpPackageVersion]);
             } else {
-              exec('brew', ['php', 'install', phpPackage + "@" + phpPackageVersion]);
+              brewExec(['php', 'install', phpPackage + "@" + phpPackageVersion]);
             }
 
-            exec('brew', ['php', 'link', phpPackage + "@" + phpPackageVersion]);
+            brewExec(['php', 'link', phpPackage + "@" + phpPackageVersion]);
           case 'Windows':
             // --ignore-package-exit-codes is to prevent
             // "Packages requiring reboot: - vcredist140 (exit code 3010)" from failing the installation
@@ -123,7 +123,7 @@ class PhpCommand extends Command {
     foldOutput('php-uninstall', function() {
       switch Sys.systemName() {
         case 'Linux': exec('sudo', ['apt-get', '-qy', 'remove', phpPackage + phpPackageVersion]);
-        case 'Mac':   exec('brew', ['remove', phpPackage + "@" + phpPackageVersion]);
+        case 'Mac':   brewExec(['remove', phpPackage + "@" + phpPackageVersion]);
       }
     });
   }

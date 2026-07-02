@@ -205,6 +205,23 @@ class Command {
   #end
 
   /**
+   * Runs brew on macOS under the native ARM architecture when using /opt/homebrew.
+   * Prevents "Cannot install under Rosetta 2 in ARM default prefix" on Apple Silicon CI runners.
+   */
+  function brewExec(args:Array<String>):Void {
+    if (Sys.systemName() == 'Mac' && '/opt/homebrew/bin/brew'.exists())
+      exec('arch', ['-arm64', 'brew'].concat(args));
+    else
+      exec('brew', args);
+  }
+
+  function tryBrewRun(args:Array<String>):RunResult {
+    if (Sys.systemName() == 'Mac' && '/opt/homebrew/bin/brew'.exists())
+      return tryToRun('arch', ['-arm64', 'brew'].concat(args));
+    return tryToRun('brew', args);
+  }
+
+  /**
    * Exits this process if command execution failed.
    */
   function exec(cmd, ?args:Array<String>):Void {
@@ -268,10 +285,10 @@ class Command {
         case 'Mac':
           // https://brew.sh/
           if (isFirstPackageInstallation) {
-            exec('brew', ['update']); // to prevent "Homebrew must be run under Ruby 2.3!" https://github.com/travis-ci/travis-ci/issues/8552#issuecomment-335321197
+            brewExec(['update']); // to prevent "Homebrew must be run under Ruby 2.3!" https://github.com/travis-ci/travis-ci/issues/8552#issuecomment-335321197
             isFirstPackageInstallation = false;
           }
-          exec('brew', ['install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
+          brewExec(['install', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
         case 'Windows':
           // https://chocolatey.org/
           exec('choco', ['install', '--no-progress', packageName].concat(if (additionalArgs == null) [] else additionalArgs));
