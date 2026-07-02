@@ -40,7 +40,6 @@ jobs:
           - macos-latest
           - windows-latest
         haxe:
-          - 4.2.5
           - 4.3.7
           - 5.0.0-preview.1
 
@@ -127,8 +126,8 @@ jobs:
     - name: Build Travix
       shell: bash
       run: |
-        haxe build-neko.hxml -lib hx3compat
-        echo "HAXE_LIBS=-lib hx3compat" >> $GITHUB_ENV
+        haxe build-neko.hxml -lib hx4compat
+        echo "HAXE_LIBS=-lib hx4compat" >> $GITHUB_ENV
 
     - name: Test [eval]
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
