@@ -64,16 +64,16 @@ class HashLinkCommand extends Command {
         var hlVersion = '1.15';
 
         run('curl', [ // https://stackoverflow.com/a/50200838/5116073
-          "-sSLo", '$temp\\hl-$hlVersion.0-win.zip',
+          "-sSLo", '$temp\\hashlink-$hlVersion.0-win.zip',
           '$HL_GITHUB_RELEASES_BASE_URL/$hlVersion/hashlink-$hlVersion.0-win.zip'
         ]);
 
         run('tar', [ // https://superuser.com/a/1473255/1139467
           "-C", temp,
-          "-xvf", '$temp\\hl-$hlVersion.0-win.zip'
+          "-xvf", '$temp\\hashlink-$hlVersion.0-win.zip'
          ]);
 
-        hlCommand = '$temp\\hl-$hlVersion.0-win\\hl.exe';
+        hlCommand = '$temp\\hashlink-$hlVersion.0-win\\hl.exe';
       });
       return;
     }
