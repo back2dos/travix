@@ -113,51 +113,61 @@ jobs:
       shell: bash
       run: lix download
 
-    - name: Register travix dev lib
-      shell: bash
-      run: haxelib dev travix .
-
-    - name: Configure haxelib paths
-      if: runner.os != 'Windows'
-      shell: bash
-      run: |
-        LIX_ROOT="${HOME}/haxe"
-        echo "HAXELIB_PATH=${LIX_ROOT}/haxe_libraries:${LIX_ROOT}/haxelib" >> $GITHUB_ENV
-
     - name: Build Travix
       shell: bash
+      run: haxe build-neko.hxml -lib hx4compat
+
+    - name: Set test HAXE_LIBS
+      shell: bash
       run: |
-        haxe build-neko.hxml -lib hx4compat
-        echo "HAXE_LIBS=-lib hx4compat" >> $GITHUB_ENV
+        if [ "${{ matrix.haxe }}" != "4.2.5" ]; then
+          echo "HAXE_LIBS=-lib hx4compat" >> "$GITHUB_ENV"
+        fi
+
+    - name: Prepare isolated test workspace
+      shell: bash
+      env:
+        HAXE_VERSION: ${{ matrix.haxe }}
+      run: node scripts/prepare-test-workspace.mjs
 
     - name: Test [eval]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix interp -D eval-stack ${HAXE_LIBS:-}
 
     - name: Test Travix with [hl]
       if: runner.os == 'Windows'
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix hl ${HAXE_LIBS:-}
 
     - name: Test Travix with [interp]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix interp ${HAXE_LIBS:-}
 
     - name: Test Travix with [lua]
       continue-on-error: ${{ runner.os != 'Linux' }}
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix lua ${HAXE_LIBS:-}
 
     - name: Test Travix with [neko]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix neko ${HAXE_LIBS:-}
 
     - name: Test Travix with [node]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix node ${HAXE_LIBS:-}
 
     - name: Test Travix with [php]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix php ${HAXE_LIBS:-}
 
     - name: Test Travix with [python]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix python ${HAXE_LIBS:-}
 
     - name: Test Travix with [jvm]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix jvm ${HAXE_LIBS:-}
 
     - name: Test Travix with [js]
+      working-directory: ${{ env.TEST_WORKSPACE }}
       run: lix run travix js ${HAXE_LIBS:-}
