@@ -65,7 +65,7 @@ class HashLinkCommand extends Command {
 
         run('curl', [ // https://stackoverflow.com/a/50200838/5116073
           "-sSLo", '$temp\\hl-$hlVersion.0-win.zip',
-          '$HL_GITHUB_RELEASES_BASE_URL/$hlVersion/hl-$hlVersion.0-win.zip'
+          '$HL_GITHUB_RELEASES_BASE_URL/$hlVersion/hashlink-$hlVersion.0-win.zip'
         ]);
 
         run('tar', [ // https://superuser.com/a/1473255/1139467
