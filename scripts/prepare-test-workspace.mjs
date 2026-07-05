@@ -55,7 +55,7 @@ for (const file of hxmlFiles) {
 }
 
 run('lix', ['scope', 'create'], testWorkspace);
-run('lix', ['use', 'haxe', haxeVersion], testWorkspace);
+run('lix', ['install', 'haxe', haxeVersion], testWorkspace);
 run('lix', ['dev', 'travix', repoRoot], testWorkspace);
 run('lix', ['download'], testWorkspace);
 
