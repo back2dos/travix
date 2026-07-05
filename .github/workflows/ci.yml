@@ -135,7 +135,6 @@ jobs:
 
     - name: Test Travix with [hl]
       if: runner.os == 'Windows'
-      continue-on-error: ${{ matrix.haxe == '5.0.0-preview.1' }}
       run: lix run travix hl ${HAXE_LIBS:-}
 
     - name: Test Travix with [interp]
