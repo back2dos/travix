@@ -28,10 +28,10 @@ class Travix {
   public static var HAXELIB_CONFIG(default, null) = 'haxelib.json';
 
   // env
-  public static var isCI(default, never) = getEnv('CI') != null;
   public static var isAppVeyor(default, never) = getEnv('APPVEYOR') == 'True';
   public static var isGithubActions(default, never) = getEnv('GITHUB_ACTIONS') == 'true';
   public static var isTravis(default, never) = getEnv('TRAVIS') == 'true';
+  public static var isCI(default, never) = getEnv('CI') != null || isAppVeyor || isGithubActions || isTravis;
 
   public static var counter = 0;
 
