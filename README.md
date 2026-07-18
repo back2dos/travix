@@ -7,6 +7,7 @@ Are you tired of setting up Travis CI or GitHub Actions for all your projects? T
 
 1. [Quickstart](#quickstart)
 1. [Building](#building)
+1. [Browser JS hooks](#browser-js-hooks)
 1. [Using Travix in your code](#using-travix-in-your-code)
 1. [Reasons to use Travix](#reasons-to-use-travix)
 1. [Reasons not to use Travix](#reasons-not-to-use-travix)
@@ -36,7 +37,7 @@ Travix has individual commands for building:
 - `node` - run tests on nodejs (with hxnodejs)
 - `php` - run tests on php
 - `java` - run tests on java
-- `js` - run tests on [puppeteer](https://www.npmjs.com/package/puppeteer) (headless browser)
+- `js` - run tests on [puppeteer](https://www.npmjs.com/package/puppeteer) (headless browser). Customize via [`.travix/js/hooks.js`](#browser-js-hooks); `bin/js/run.js` / `bin/js/run.html` overrides still work but are deprecated and warn.
 - `flash` - run tests on flash (see instructions below)
 - `python` - run tests on python
 - `cs` - run tests on cs
@@ -45,6 +46,37 @@ Travix has individual commands for building:
 - `hl` - run tests on hashlink
 
 So instead of having to have to define all kinds of builds and figuring out the right way to run them, this will do.
+
+### Browser JS hooks
+
+For the `js` target, Travix always writes `bin/js/run.travix.js` and `bin/js/run.travix.html`, then runs the Travix runner unless a project-owned `bin/js/run.js` is present (deprecated override).
+
+Prefer customizing the runner with a project-root hooks file:
+
+```js
+// .travix/js/hooks.js
+module.exports = {
+  // port: 9000,
+  // htmlFile: 'custom.html', // served from bin/js
+  serveOptions(defaults) {
+    return { ...defaults /*, rewrites: [...] */ };
+  },
+  launchOptions(defaults) {
+    return { ...defaults, headless: false };
+  },
+  // async beforeGoto(page) {
+  //   // page APIs compose with Travix defaults (e.g. extra console listeners,
+  //   // exposeFunction, evaluateOnNewDocument). Use page.browser() if needed.
+  // },
+  // async afterGoto(page) {},
+};
+```
+
+By default hooks are loaded from `.travix/js/hooks.js` under the current working directory. Set `TRAVIX_CONFIG_DIR` to use a different config root instead (hooks at `$TRAVIX_CONFIG_DIR/js/hooks.js`).
+
+Use `beforeGoto` for page setup before navigation; `afterGoto` for post-load steps. Console output still mirrors to stdout by default — additional `page.on('console', …)` handlers in `beforeGoto` run alongside it.
+
+If `bin/js/run.js` or `bin/js/run.html` exists, Travix still uses them for backward compatibility and prints a migration warning.
 
 
 ### Using Travix in your code

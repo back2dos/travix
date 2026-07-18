@@ -1,6 +1,8 @@
 package travix.commands;
 
 import tink.cli.Rest;
+import travix.Macro;
+import Sys.*;
 
 using sys.io.File;
 using sys.FileSystem;
@@ -26,11 +28,20 @@ class JsCommand extends Command {
 
   public function buildAndRun(rest:Rest<String>) {
     build('js', ['-js', 'bin/js/tests.js'].concat(rest), function () {
-      var index = 'bin/js/run.html';
-      if(!index.exists()) index.saveContent(defaultIndexHtml());
-      var run = 'bin/js/run.js';
-      if(!run.exists()) run.saveContent(defaultRunScript());
-      exec('node', ['bin/js/run.js']);
+      'bin/js/run.travix.html'.saveContent(defaultIndexHtml());
+      'bin/js/run.travix.js'.saveContent(defaultRunScript());
+
+      var userHtml = 'bin/js/run.html';
+      if(userHtml.exists())
+        println('WARN: bin/js/run.html overrides the default runner page and is deprecated. Prefer customizing via .travix/js/hooks.js, then remove bin/js/run.html.');
+
+      var userRun = 'bin/js/run.js';
+      if(userRun.exists()) {
+        println('WARN: bin/js/run.js overrides the default JS runner and is deprecated. Prefer customizing via .travix/js/hooks.js, then remove bin/js/run.js.');
+        exec('node', [userRun]);
+      } else {
+        exec('node', ['bin/js/run.travix.js']);
+      }
     });
   }
 
