@@ -23,7 +23,10 @@ import haxe.macro.Context;
  * CI Helper for Haxe
  */
 class Travix {
-  public static var TESTS(default, null) = 'tests.hxml';
+  public static var TESTS(default, null) = switch getEnv('TRAVIX_HXML') {
+    case null | '': 'tests.hxml';
+    case v: v;
+  };
   public static var TRAVIX_COUNTER(default, null) = '.travix_counter';
   public static var HAXELIB_CONFIG(default, null) = 'haxelib.json';
 

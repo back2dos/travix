@@ -47,6 +47,8 @@ Travix has individual commands for building:
 
 So instead of having to have to define all kinds of builds and figuring out the right way to run them, this will do.
 
+By default Travix reads `tests.hxml`. Set `TRAVIX_HXML` to use a different hxml file instead.
+
 ### Browser JS hooks
 
 For the `js` target, Travix always writes `bin/js/run.travix.js` and `bin/js/run.travix.html`, then runs the Travix runner unless a project-owned `bin/js/run.js` is present (deprecated override).
