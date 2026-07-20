@@ -1,6 +1,7 @@
 package travix;
 
 import sys.io.File;
+
 using haxe.io.Path;
 
 #if macro
@@ -19,7 +20,8 @@ class Macro {
 	}
 
 	public static function loadFile(name:String) {
-		return MacroStringTools.formatString(File.getContent(Context.getPosInfos((macro null).pos).file.directory() + '/$name'), Context.currentPos());
+		final content = File.getContent(Context.getPosInfos((macro null).pos).file.directory() + '/$name');
+		return macro $v{content};
 	}
 
 	static function setup() {
@@ -28,4 +30,3 @@ class Macro {
 	}
 	#end
 }
-

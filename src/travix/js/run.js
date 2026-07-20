@@ -6,7 +6,7 @@ const path = require("path");
 
 function loadHooks() {
 	const defaults = {
-		port: 8912,
+		port: 0,
 		htmlFile: fs.existsSync(path.join(__dirname, "run.html"))
 			? "run.html"
 			: "run.travix.html",
@@ -26,7 +26,6 @@ function loadHooks() {
 	const hooks = loadHooks();
 	const { port, htmlFile } = hooks;
 	// $$ escapes for travix.Macro.loadFile (MacroStringTools.formatString).
-	const url = `http://localhost:$${port}/$${htmlFile}`;
 
 	const serveOptions = await hooks.serveOptions({ public: __dirname });
 
@@ -35,6 +34,9 @@ function loadHooks() {
 	});
 
 	server.listen(port, async () => {
+		const port = server.address().port;
+		const url = `http://localhost:${port}/${htmlFile}`;
+
 		const launchOptions = await hooks.launchOptions({
 			headless: true,
 			devtools: true,
