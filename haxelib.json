@@ -3,6 +3,7 @@
 	"description": "Travis helper for Haxe",
 	"classPath": "src",
 	"dependencies": {
+		"hx3compat": "",
 		"tink_cli": ""
 	},
 	"url": "http://github.com/back2dos/travix/",
